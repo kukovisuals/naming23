@@ -889,7 +889,7 @@ if (
       * Use as last resort
       * 
       * @params
-      * pTitle (str) => the product.title
+      * pTitle (str) => the product.title || product.properties['pdp_fabric_type']
       * request (str) => what kind of data should be returned; color, style, or fabric
       ***/
       let requestedDataStr = "",
@@ -939,50 +939,55 @@ if (
         break;
     
         case "fabric":
-          if (stringParts.indexOf("Silk") >= 0) {
-              // this is the silk line
-              requestedDataStr = "Washable Eco Silk";
-          } else if (stringParts.indexOf("Cotton") >= 0) {
-            // this is the cotton line
-            requestedDataStr = "Seamless Cotton";
-          } else if (stringParts.indexOf("Mesh") >= 0) {
-            // this is the cotton line
-            requestedDataStr = "Seamless Sheer";
-          } else {
-            // this is the sig seamless line
-            requestedDataStr = "Seamless";
-          }
-          if (pTitle.indexOf('Gift Card') >= 0) {
-            requestedDataStr = "Digital";
-          }
+            debugger
+            const stringPartsLower = stringParts.map( d => d.toLowerCase());
+            debugger
+            if (stringPartsLower.indexOf("wireless") >= 0) {
+                // this is the cotton line
+                requestedDataStr = "Wireless ";
+            } else if (stringPartsLower.indexOf("cotton") >= 0) {
+                // this is the cotton line
+                requestedDataStr = "Cotton ";
+            } else if (stringPartsLower.indexOf("mesh") >= 0) {
+                // this is the cotton line
+                requestedDataStr = "Sheer ";
+            } if (stringPartsLower.indexOf("support") >= 0 && stringPartsLower.indexOf("underwear") < 0) {
+                // this is the silk line
+                requestedDataStr = "Support ";
+            } else {
+                // this is the sig seamless line
+                requestedDataStr = "";
+            }
+            if (pTitle.indexOf('Gift Card') >= 0) {
+                requestedDataStr = "Digital";
+            }
         break;
     
         case "style":
-          let tempData = stylesLibrary.reduce(function (acc, style) {
-            if (acc.dataInput.indexOf(style) >= 0) {
-              acc.dataOutput = style;
-              return acc;
-            }
-            return acc;
-          },  {dataInput: stringParts, dataOutput: ""});
+            let tempData = stylesLibrary.reduce(function (acc, style) {
+                if (acc.dataInput.indexOf(style) >= 0) {
+                acc.dataOutput = style;
+                return acc;
+                }
+                return acc;
+            },  {dataInput: stringParts, dataOutput: ""});
     
-          // if a style is ever returned as ??, it means it wasnt found > addd to stylesLibrary
-          requestedDataStr = tempData.dataOutput.length === 0 ? "??" : tempData.dataOutput;
-          if (stringParts.indexOf("Mesh") >= 0 && pTitle.indexOf('Highwaisted') >= 0) {
-            requestedDataStr = "High Cut Highwaisted";
-          }
-          if (pTitle.indexOf('Only') >= 0) {
-            requestedDataStr = "Only Bra";
-          }
-          if (pTitle.indexOf('High Cut') >= 0) {
-            requestedDataStr = "High Cut Highwaisted";
-          }
-          if (pTitle.indexOf('Highwaisted Thong') >= 0) {
-            requestedDataStr = "Highwaisted Thong";
-          }
-          if (pTitle.indexOf('Gift Card') >= 0) {
-            requestedDataStr = "Gift Card";
-          }
+            // if a style is ever returned as ??, it means it wasnt found > addd to stylesLibrary
+            requestedDataStr = tempData.dataOutput.length === 0 ? "??" : tempData.dataOutput;
+            if (stringParts.indexOf("Mesh") >= 0 && pTitle.indexOf('Highwaisted') >= 0) {
+                requestedDataStr = "High Cut";
+            } else if (pTitle.indexOf('High Cut') >= 0) {
+                requestedDataStr = "High Cut";
+            } else if (pTitle.indexOf('Silk') >= 0) {
+                requestedDataStr = 'Silk ' + requestedDataStr;
+            } else if (pTitle.indexOf('Only') >= 0) {
+                requestedDataStr = "Only Bra";
+            } else if (pTitle.indexOf('Highwaisted Thong') >= 0) {
+                requestedDataStr = "High Waisted Thong";
+            } 
+            if (pTitle.indexOf('gift card') >= 0) {
+                requestedDataStr = "Gift Card";
+            }
         break;
       }
     
@@ -1822,19 +1827,6 @@ if (
             }),
             document.addEventListener("rebuy.add", async function (a) {
                 let prodAddedName = !!a.detail.product.title ? a.detail.product.title : "bundle";
-                  
-                // Step 2: Fetch the cart details to get the total amount
-                const cartDetails = await fetchCartAndCreateMessage();
-                const has_sub_in_cart = cartDetails.items.reduce((acc, lineItem) => {return lineItem.product_type.indexOf("Subscription") >= 0 ? acc = true : acc;}, false);
-                const totalPrice = (cartDetails.total_price / 100).toFixed(2);
-                const GAMI_MESSAGE = createDiscountMessage(totalPrice);
-                
-                // Check if an element with the class 'loggedIn' exists in the DOM
-                const isLoggedInElementPresent = document.querySelector('.loggedIn') !== null;
-                
-                // If the element exists, set the variable to 'hide'. Otherwise, set it to an empty string.
-                const statusUser = isLoggedInElementPresent || has_sub_in_cart ? "hide" : "";
-              
                 console.log(":: upsell ADDtoCART event ::", a.detail.product.selected_variant),
                     a.detail.product.selected_variant &&
                         ((window.liQ = window.liQ || []),
@@ -1845,23 +1837,7 @@ if (
                         })),
                     window.location.href.indexOf("/build-your-box") >= 0
                         ? M.toast({ html: "Success! Added " + a.detail.product.title + " to your first box.", classes: 'ebyAtcAlert success', displayLength: 1250 })
-                        : (M.toast({ 
-                              html:`
-                                <span class="atcNoteAvatar">
-                                  <header class="atcNoteAvatar-wrapper23">
-                                    <p class="atcNoteAvatar-pdp-desc23 eby-atcnclr23">Success! Added ${prodAddedName} to your cart. </p>
-                                    <div class="eby-toast-gami-container23 ${statusUser}">
-                                      <div class="eby-toast-img23">
-                                        <img class="" width="21" height="13" alt="shipping" title="shipping" src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_181.svg?v=1695670772">
-                                      </div>
-                                        <span class="eby-toast-img-txt23">${GAMI_MESSAGE}</span>
-                                    </div>
-                                  </header>
-                                </span>
-                                `, 
-                              classes: 'ebyAtcAlert success23', 
-                              displayLength: 2500 
-                            }),
+                        : (M.toast({ html: "Success! Added " + prodAddedName + " to your cart.", classes: 'ebyAtcAlert success', displayLength: 1250 }),
                           (window.location.href.indexOf("/products") >= 0 || window.location.href.indexOf("/pages") >= 0) && jQuery(".jsDrawerOpenRight").trigger("click")),
                     console.log(a.detail.widget.data.cart.total_price),
                     $(".motivator-bar").length > 0 && a.detail.widget.data.cart.total_price && checkMotivatorBanner(a.detail.widget.data.cart.total_price / 100),
@@ -2172,61 +2148,6 @@ if (
                                 console.log("esapi-error", a);
                             });
                 }
-                // This async function will handle fetching the cart and creating the message
-                async function fetchCartAndCreateMessage() {
-                  try {
-                    const response = await $.ajax({
-                      type: "POST",
-                      url: "/cart.js",
-                      dataType: "json",
-                    });
-                    
-                    return response;
-                  } catch (error) {
-                    // If an error occurs (either in the AJAX request or during processing), it will be caught here
-                    console.error('An error occurred:', error);
-                    throw error; // you can also re-throw the error if you want to handle it at a higher level
-                  }
-                }
-                // 101723 
-                function createDiscountMessage(num) {
-                  // An array of thresholds, each with its own limit, discount message, and amount.
-                  // This array is ordered by the amount needed for the discount, from highest to lowest.
-                  const thresholds = [
-                    { gami: 0, limit: 175, reachedMsg: 'You got $25 off' },
-                    { gami: 175, limit: 130, notReachedMsg: 'Add ${diff} to get $25 off', discount: 25 },
-                    { gami: 130, limit: 100, notReachedMsg: 'Add ${diff} to get $15 off', discount: 15 },
-                    { gami: 100, limit: 0, notReachedMsg: 'Add ${diff} to get free shipping' },
-                    // You can continue adding more thresholds here
-                  ];
-        
-                  // Find the appropriate threshold based on the provided number
-                  const applicableThreshold = thresholds.find(threshold => +num > threshold.limit);
-                  // Determine the message to display
-                  if (applicableThreshold.reachedMsg) {
-                    return applicableThreshold.reachedMsg;
-                  } else {
-                    // Calculate the difference needed to reach the next threshold
-                    const diff =  applicableThreshold.gami - num;
-                    // Construct the message indicating how much more to add. This uses a template literal to insert the 'diff' value.
-                    return applicableThreshold.notReachedMsg.replace('${diff}', `$${formatNumber(diff)}`);
-                  }
-                }
-              
-                function formatNumber(num) {
-                  // Convert the number to a fixed decimal string and then back to a float.
-                  // This step ensures we're working with a consistent representation.
-                  const floatNum = parseFloat(num.toFixed(2));
-                
-                  // Check if the float is equivalent to its integer counterpart.
-                  if (Math.floor(floatNum) === floatNum) {
-                    // If it is, we convert the float to an integer and return it as a string.
-                    return floatNum.toFixed(0);
-                  } else {
-                    // If it's not, we keep the number as a float with two decimal places.
-                    return floatNum.toFixed(2);
-                  }
-                }
             }),
             $("body").on("click", ".gorgias-web-messenger-container-button", function (a) {
                 $("#gorgias-web-messenger-container").fadeIn(), Smooch.open(), gtag("event", "btn_click__open_gorgias_chat", { link_text: a.target.innerText, link_url: a.target.href, link_id: a.target.id, link_title: a.target.title });
@@ -2480,26 +2401,6 @@ if (
                 a.preventDefault(),
                     (a.target.disabled = !0),
                     jQuery.getJSON("/cart.js", function (b, c) {
-
-                        //let currPage = window.location.href;
-                        let freeBraUnlocked = false;
-                        //if (currPage.indexOf('bra-subscription-free') >= 0) {
-                          // loop through items to find the most expensive bra and reduce its price to zero
-                          //let brasApplicable = cart.items.reduce((acc, item) => (if (item.product_type.indexOf('bra') >= 0) { acc.push(item);} return acc), []);
-                  
-                          let brasApplicable = b.items.reduce((acc, item) => {
-                            if (!!item.properties['FREEBRALETTE']) { acc.push(item);} return acc;
-                          }, []);
-
-                          console.log('helllooooo');
-                          if (brasApplicable.length > 0) {
-                            // choose the higher product and make it have an additional discount
-                            freeBraUnlocked = true; 
-                          }
-                  
-                          // find the bra in question and replace it in the cart data
-                        //}
-                      
                         jQuery.ajax({
                             type: "POST",
                             crossDomain: !0,
@@ -2518,16 +2419,8 @@ if (
                                 if (!!currentUtms.attributes) {
                                    d += "?" + Object.keys(currentUtms.attributes).map(function(key, index){return key + "=" + currentUtms.attributes[key]}).join('&'); 
                                 }
-
-                                if (!!freeBraUnlocked) {
-                                  (d = ((b = d), (c = (e = $(".subscription-offer")).data("enabled")), (f = e.data("coupon")), void 0 === c || void 0 === f || !0 !== c ? b : `${b}`));
-                                  d = `${d}?discount=FREEBRA`;
-                                  location.href = d
-                                  a.target.disabled = !1;
-                                } else {
-                                  (d = ((b = d), (c = (e = $(".subscription-offer")).data("enabled")), (f = e.data("coupon")), void 0 === c || void 0 === f || !0 !== c ? b : `${b}`)), (location.href = d), (a.target.disabled = !1);
-                                }
                                 
+                                (d = ((b = d), (c = (e = $(".subscription-offer")).data("enabled")), (f = e.data("coupon")), void 0 === c || void 0 === f || !0 !== c ? b : `${b}`)), (location.href = d), (a.target.disabled = !1);
                             },
                         });
                     });
@@ -2701,16 +2594,6 @@ vela.initTbopProductQty = function (elemSelector) {
     
 };
 vela.productPage = function (options) {
-    let bundleSwatchElement = document.querySelector('.template-product .proBoxInfo .js-swatch');
-    if (bundleSwatchElement) {
-        bundleSwatchElement.classList.remove('bundleActive23');
-    }
-
-    let addToCartBundle = document.querySelector('.proBoxInfo .proButton.mb20 button#AddToCart');
-    if(addToCartBundle){
-        addToCartBundle.classList.remove('activeDisable23')    
-    }
-  
     var moneyFormat = options.money_format,
         variant = options.variant,
         selector = options.selector;
@@ -3306,9 +3189,7 @@ vela.productPage = function (options) {
                       var productId = parseInt($("#productDataStore").attr("data-product-id"));
                       console.log(':  running swatch stock check :', currentPrdObj);
                       ebyStockCheck(currentPrdObj);
-                      if (!!StampedFn) {
-                        StampedFn.loadBadges();
-                      }
+                      StampedFn.loadBadges();
                       ebyLazyLoad();
                       runCarouselArrows();
                       vela.pdp_es = null;
@@ -3435,7 +3316,7 @@ vela.productPage = function (options) {
               },200)
             }
         }
-       
+
     });
 
     // subscription add to cart toggler
@@ -4001,10 +3882,4 @@ function selectSizeCheck(){
 
       return finalUrl;
     }
-}
-function loadScript(src) {
-    var script = document.createElement('script');
-    script.async = true;
-    script.src = src;
-    document.body.appendChild(script);
 }

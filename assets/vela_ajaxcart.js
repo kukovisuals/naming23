@@ -204,78 +204,7 @@ function attributeToString(attribute) {
         jQuery.ajax(params);
     }),
     (ShopifyAPI.addItemFromForm = async function (a, d, e) {
-        // 101723 
-        function createDiscountMessage(num) {
-          // An array of thresholds, each with its own limit, discount message, and amount.
-          // This array is ordered by the amount needed for the discount, from highest to lowest.
-          const thresholds = [
-            { gami: 0, limit: 175, reachedMsg: 'You got $25 off' },
-            { gami: 175, limit: 130, notReachedMsg: 'Add ${diff} to get $25 off', discount: 25 },
-            { gami: 130, limit: 100, notReachedMsg: 'Add ${diff} to get $15 off', discount: 15 },
-            { gami: 100, limit: 0, notReachedMsg: 'Add ${diff} to get free shipping' },
-            // You can continue adding more thresholds here
-          ];
-
-          // Find the appropriate threshold based on the provided number
-          const applicableThreshold = thresholds.find(threshold => +num > threshold.limit);
-          // Determine the message to display
-          if (applicableThreshold.reachedMsg) {
-            return applicableThreshold.reachedMsg;
-          } else {
-            // Calculate the difference needed to reach the next threshold
-            const diff =  applicableThreshold.gami - num;
-            // Construct the message indicating how much more to add. This uses a template literal to insert the 'diff' value.
-            return applicableThreshold.notReachedMsg.replace('${diff}', `$${formatNumber(diff)}`);
-          }
-        }
-      
-        function formatNumber(num) {
-          // Convert the number to a fixed decimal string and then back to a float.
-          // This step ensures we're working with a consistent representation.
-          const floatNum = parseFloat(num.toFixed(2));
-        
-          // Check if the float is equivalent to its integer counterpart.
-          if (Math.floor(floatNum) === floatNum) {
-            // If it is, we convert the float to an integer and return it as a string.
-            return floatNum.toFixed(0);
-          } else {
-            // If it's not, we keep the number as a float with two decimal places.
-            return floatNum.toFixed(2);
-          }
-        }
-      
-        // This async function will handle fetching the cart and creating the message
-        async function fetchCartAndCreateMessage() {
-          try {
-            const response = await $.ajax({
-              type: "POST",
-              url: "/cart.js",
-              dataType: "json",
-            });
-            
-            return response;
-          } catch (error) {
-            // If an error occurs (either in the AJAX request or during processing), it will be caught here
-            console.error('An error occurred:', error);
-            throw error; // you can also re-throw the error if you want to handle it at a higher level
-          }
-        }
-        async function mainAddToCartAjaxPdp(a){
-            try {
-              const responseData =  await $.ajax({
-                type: "POST",
-                url: "/cart/add.js",
-                data: jQuery(a).serialize(),
-                dataType: "json"
-              });
-              return responseData;
-            } catch (err) {
-                // If the request fails, this block will catch the error
-                console.log('Error in adding a product ',err)
-                throw err
-            }
-        }
-
+        debugger
         // fc 041123
         let getBndlQuickId = ''
         const checkBndl = Object.values(a.attributes).length > 4;
@@ -287,7 +216,6 @@ function attributeToString(attribute) {
         const bndlConditional = window.location.pathname.includes('collections/');
       
         let braVariants = 0;
-      
 
         // jQuery('.ebyProdTile[data-prodsku="7117808173100"]').attr('data-prodtype')
         let isABundleProd = jQuery(event.target).closest('.ebyProdTile').attr('data-prodtype') == "pack";
@@ -423,12 +351,6 @@ function attributeToString(attribute) {
                       }
                     });
                     const postData = await response.json();
-                  
-                    // Step 2: Fetch the cart details to get the total amount
-                    const cartDetails = await fetchCartAndCreateMessage();
-                    const totalPrice = (cartDetails.total_price / 100).toFixed(2);
-                    const GAMI_MESSAGE = createDiscountMessage(totalPrice);
-                    const has_sub_in_cart = cartDetails.items.reduce((acc, lineItem) => {return lineItem.product_type.indexOf("Subscription") >= 0 ? acc = true : acc;}, false);
                     
                     let gaTrackingObj = {
                       itemId: '',
@@ -437,7 +359,7 @@ function attributeToString(attribute) {
                       property: ''
                     }
                     postData.items.forEach( (d,i) => {
-                        modalToast(d, GAMI_MESSAGE, has_sub_in_cart);
+                        modalToast(d);
                         
                         gaTrackingObj.itemId = d.properties.isBundleSet;
                         gaTrackingObj.property = d.properties.typeBndlSet;
@@ -450,7 +372,7 @@ function attributeToString(attribute) {
                     bundleSetGaTracking(gaTrackingObj)
                     //updateTrueCartCount();
                   } catch (error) {
-                    console.error(`Error while adding ${error.responseJSON}`, `\n Status: ${error.status}`);
+                    console.error(`Error while adding ${error.responseJSON.description}`, `\n Status: ${error.status}`);
                     console.error('error c', error);
                 }
             }
@@ -470,7 +392,8 @@ function attributeToString(attribute) {
                             "typeBndlSet": typePdp,
                             "Shipping Option": "Ecommerce WH",
                             "set_bundle_price": parseInt(Shopify.formatMoney(item.price).replace("$", "")),
-                            "set_bundle_prods": item.title
+                            "set_bundle_prods": item.title,
+                            "pdp_fabric_type": item.title
                         }
                     };
                 });
@@ -511,7 +434,6 @@ function attributeToString(attribute) {
                       type: mixType
                   };
                 }
-              
                 return item
 
                 function bndlSizeObj(data){
@@ -553,119 +475,94 @@ function attributeToString(attribute) {
                 return arr.split('::');
             }
         } else {
-          // combine both functions to create toast 
-          addProductAndShowToast(a);
-          async function addProductAndShowToast(productId){
-            try {
-              
-              $("body").addClass("velaCartAdding");
-              // Send the request and wait for the response
-              const b = await mainAddToCartAjaxPdp(productId);
-              // Step 2: Fetch the cart details to get the total amount
-              const cartDetails = await fetchCartAndCreateMessage();
-              const has_sub_in_cart = cartDetails.items.reduce((acc, lineItem) => {return lineItem.product_type.indexOf("Subscription") >= 0 ? acc = true : acc;}, false);
-              const totalPrice = (cartDetails.total_price / 100).toFixed(2);
-              const GAMI_MESSAGE = createDiscountMessage(totalPrice);
-              
-              // Check if an element with the class 'loggedIn' exists in the DOM
-              const isLoggedInElementPresent = document.querySelector('.loggedIn') !== null;
-              
-              // If the element exists, set the variable to 'hide'. Otherwise, set it to an empty string.
-              const statusUser = isLoggedInElementPresent || has_sub_in_cart ? "hide" : "";
-              
-              $("body").removeClass("velaCartAdding");
-              if (
-                  ($("body").removeClass("velaCartAdding"),
-                  "modal" == window.ajaxcart_type &&
-                      (null != b.image ? $(".headerCartModal").find(".cartProductImage img").attr("src", b.image) : $(".headerCartModal").find(".cartProductImage img").attr("src", "//placehold.it/100x100"),
-                      $(".headerCartModal").find(".productTitle").html(b.title),
-                      $(".headerCartModal").addClass("active")),
-                  "function" == typeof d ? d(b, a) : ShopifyAPI.onItemAdded(b, a),
-                  console.log(":: core ADDtoCART event 1 ::", b),
-                  b.product_type.indexOf("Mesh") >= 0)
-              )
-                  var c = b.product_title.replace("Highwaisted", "HC High Waisted");
-              else var c = b.product_title;
-              var f = !1
-              M.toast({
-                  html:`
-                      <span class="atcNoteAvatar">
-                        <header class="atcNoteAvatar-wrapper23">
-                          <p class="bold eby-atcnclr23">Added to Cart</p>
-                          <p class="atcNoteAvatar-pdp-desc23 eby-atcnclr23">${c}</p>
-                          <div class="eby-toast-gami-container23 ${statusUser}">
-                            <div class="eby-toast-img23">
-                              <img class="" width="21" height="13" alt="shipping" title="shipping" src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_181.svg?v=1695670772">
-                            </div>
-                              <span class="eby-toast-img-txt23">${GAMI_MESSAGE}</span>
-                          </div>
-                        </header>
-                        <img class="prodImg-atc" data-prod-added="${b.id}" width="50" height="50" src="${b.featured_image.url}"/>
-                      </span>
-                      `,
-                  classes: "ebyAtcAlert success23",
-                  displayLength: 2500
-              }),
-                  (window.liQ = window.liQ || []),
-                  window.liQ.push({ event: "addToCart", email: window.customer_email, items: [{ id: b.id.toString(), price: Shopify.formatMoney(b.price, window.money).replace("$", ""), quantity: b.qty, currency: "USD" }] }),
-                  (window.dotq = window.dotq || []),
-                  window.dotq.push({ projectId: "10000", properties: { pixelId: "10172108", qstrings: { et: "custom", ec: "shopping", ea: "yn-add_to_cart", el: "add to cart", ev: b.sku + "::" + b.qty, gv: "" } } }),
-                  f ||
-                    ((f = !0),
-                    gtag("event", "add_to_cart", {
-                        currency: "USD",
-                        value: parseInt(Shopify.formatMoney(b.price).replace("$", "")),
-                        page_location: window.location.pathname, 
-                        page_title: document.title,
-                        event_category: b.product_title,
-                        event_label: window.location.pathname.indexOf("/products/") >= 0 ? 'atc_type-proddetail_def' : window.location.pathname.indexOf("/pages/") >= 0 ? 'atc_type-landingpage_def' : 'atc_type-quickadd_def',
-                        items: [
-                            {
-                                item_id: b.product_id,
-                                item_name: b.product_title,
-                                affiliation: b.vendor,
-                                index: 0,
-                                item_category: b.product_type,
-                                item_variant: b.variant_title,
-                                price: parseInt(Shopify.formatMoney(b.price).replace("$", "")),
+        var f = !1,
+            c = {
+                type: "POST",
+                url: "/cart/add.js",
+                data: jQuery(a).serialize(),
+                dataType: "json",
+                beforeSend: function () {
+                    $("body").addClass("velaCartAdding");
+                },
+                success: function (b) {
+                    if (
+                        ($("body").removeClass("velaCartAdding"),
+                        "modal" == window.ajaxcart_type &&
+                            (null != b.image ? $(".headerCartModal").find(".cartProductImage img").attr("src", b.image) : $(".headerCartModal").find(".cartProductImage img").attr("src", "//placehold.it/100x100"),
+                            $(".headerCartModal").find(".productTitle").html(b.title),
+                            $(".headerCartModal").addClass("active")),
+                        "function" == typeof d ? d(b, a) : ShopifyAPI.onItemAdded(b, a),
+                        console.log(":: core ADDtoCART event 1 ::", b),
+                        b.product_type.indexOf("Mesh") >= 0)
+                    )
+                        var c = b.product_title.replace("Highwaisted", "HC High Waisted");
+                    else var c = b.product_title;
+                    M.toast({
+                        html:
+                            '<span class="atcNoteAvatar"><header><p class="bold">ADDED TO CART</p><p>' +
+                            c +
+                            '</p></header><img class="prodImg-atc" data-prod-added="' +
+                            b.id +
+                            '" width="50" height="50" src="' +
+                            b.featured_image.url +
+                            '" /></span>',
+                        classes: "ebyAtcAlert success",
+                    }),
+                        (window.liQ = window.liQ || []),
+                        window.liQ.push({ event: "addToCart", email: window.customer_email, items: [{ id: b.id.toString(), price: Shopify.formatMoney(b.price, window.money).replace("$", ""), quantity: b.qty, currency: "USD" }] }),
+                        (window.dotq = window.dotq || []),
+                        window.dotq.push({ projectId: "10000", properties: { pixelId: "10172108", qstrings: { et: "custom", ec: "shopping", ea: "yn-add_to_cart", el: "add to cart", ev: b.sku + "::" + b.qty, gv: "" } } }),
+                        f ||
+                            ((f = !0),
+                            gtag("event", "add_to_cart", {
                                 currency: "USD",
-                                quantity: 1,
-                            },
-                        ],
-                    }),
-                    geq.addToCart({
-                      Name: b.product_title,
-                      ProductID: b.id,
-                      ImageURL: b.image,
-                      URL: b.url,
-                      Brand: b.vendor,
-                      Price: Shopify.formatMoney(b.price).replace("$", "")
-                    }),
-                    ttq
-                        .instance("CBK4Q5RC77U0CJTABNJG")
-                        .track("AddToCart", {
-                            content_id: b.id,
-                            content_type: "product",
-                            content_category: b.product_type,
-                            content_name: b.product_title,
-                            quantity: 1,
-                            price: Shopify.formatMoney(b.price).replace("$", ""),
-                            value: $("#hcw").data("ct"),
-                            currency: "USD",
-                        }));
-            } catch(error){
-              console.log('Error creating the toast and adding to cart', error)
-              throw error
-            }
-          }
+                                value: parseInt(Shopify.formatMoney(b.price).replace("$", "")),
+                                page_location: window.location.pathname, 
+                                page_title: document.title,
+                                event_category: b.product_title,
+                                event_label: window.location.pathname.indexOf("/products/") >= 0 ? 'atc_type-proddetail_def' : window.location.pathname.indexOf("/pages/") >= 0 ? 'atc_type-landingpage_def' : 'atc_type-quickadd_def',
+                                items: [
+                                    {
+                                        item_id: b.product_id,
+                                        item_name: b.product_title,
+                                        affiliation: b.vendor,
+                                        index: 0,
+                                        item_category: b.product_type,
+                                        item_variant: b.variant_title,
+                                        price: parseInt(Shopify.formatMoney(b.price).replace("$", "")),
+                                        currency: "USD",
+                                        quantity: 1,
+                                    },
+                                ],
+                            }),
+                            geq.addToCart({
+                              Name: b.product_title,
+                              ProductID: b.id,
+                              ImageURL: b.image,
+                              URL: b.url,
+                              Brand: b.vendor,
+                              Price: Shopify.formatMoney(b.price).replace("$", "")
+                            }),
+                            ttq
+                                .instance("CBK4Q5RC77U0CJTABNJG")
+                                .track("AddToCart", {
+                                    content_id: b.id,
+                                    content_type: "product",
+                                    content_category: b.product_type,
+                                    content_name: b.product_title,
+                                    quantity: 1,
+                                    price: Shopify.formatMoney(b.price).replace("$", ""),
+                                    value: $("#hcw").data("ct"),
+                                    currency: "USD",
+                                }));
+                },
+                error: function (b, c) {
+                    $("body").removeClass("velaCartAdding"), "function" == typeof e ? e(a, b, c) : ShopifyAPI.onError(b, c);
+                },
+            };
+        jQuery.ajax(c);
       }
-      function modalToast(b, GAMI_MESSAGE, hasSubBx){
-          // Check if an element with the class 'loggedIn' exists in the DOM
-          var isLoggedInElementPresent = document.querySelector('.loggedIn') !== null;
-          
-          // If the element exists, set the variable to 'hide'. Otherwise, set it to an empty string.
-          var statusUser = isLoggedInElementPresent || hasSubBx ? "hide" : "";
-          
+      function modalToast(b){
           if (
               ($("body").removeClass("velaCartAdding"),
               "modal" == window.ajaxcart_type &&
@@ -680,23 +577,15 @@ function attributeToString(attribute) {
               var c = b.product_title.replace("Highwaisted", "HC High Waisted");
           else var c = b.product_title;
           M.toast({
-              html:`
-                  <span class="atcNoteAvatar">
-                    <header class="atcNoteAvatar-wrapper23">
-                      <p class="bold eby-atcnclr23">Added to Cart</p>
-                      <p class="atcNoteAvatar-pdp-desc23 eby-atcnclr23">${c}</p>
-                      <div class="eby-toast-gami-container23 ${statusUser}">
-                        <div class="eby-toast-img23">
-                          <img class="" width="21" height="13" alt="shipping" title="shipping" src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_181.svg?v=1695670772">
-                        </div>
-                          <span class="eby-toast-img-txt23">${GAMI_MESSAGE}</span>
-                      </div>
-                    </header>
-                    <img class="prodImg-atc" data-prod-added="${b.id}" width="50" height="50" src="${b.featured_image.url}"/>
-                  </span>
-                  `,
-              classes: "ebyAtcAlert success23",
-              displayLength: 2500
+              html:
+                  '<span class="atcNoteAvatar"><header><p class="bold">ADDED TO CART</p><p>' +
+                  c +
+                  '</p></header><img class="prodImg-atc" data-prod-added="' +
+                  b.id +
+                  '" width="50" height="50" src="' +
+                  b.featured_image.url +
+                  '" /></span>',
+              classes: "ebyAtcAlert success",
           });
       }
       function bundleSetGaTracking(b){
@@ -1215,6 +1104,13 @@ var ajaxCart = (function (module, $) {
                                 return ""
                             }
                         }
+                        let productTags = '';
+
+                        if(c.properties['pdp_fabric_type'] && !c.properties['isBundleSet']){
+                            productTags = c.properties['pdp_fabric_type']
+                        } else if(c.properties['pdp_fabric_type'] && c.properties['isBundleSet']) {
+                            productTags = c.properties['pdp_fabric_type'] + ' ' + c.product_type
+                        }
                         console.log(':edit: product item log', {
                           prod : c,
                           doesntHaveMembershipDiscounts: doesntHaveMembershipDiscounts,
@@ -1223,7 +1119,6 @@ var ajaxCart = (function (module, $) {
                           subscriptionProdSavings: subscriptionProdSavings,
                           totalOtherSavings: totalOtherSavings
                         });
-                        
                         if (
                             (c.product_type.indexOf("Mesh") >= 0 && (J = c.product_title.replace("Mesh", "Sheer").replace("Highwaisted", "HC Highwaisted")),
                             5343794233388 ==
@@ -1263,8 +1158,8 @@ var ajaxCart = (function (module, $) {
                                     savingsAmount: Shopify.formatMoney((u-g), settings.moneyFormat).replace(".00", ""),
                                     vendor: c.vendor,
                                     productType: c.product_type,
-                                    productFabric: vela.ebyProdTitleFormatter(c.product_title, "fabric"),
-                                    productStyle: vela.ebyProdTitleFormatter(c.product_title, "style"),
+                                    productFabric: '',
+                                    productStyle: vela.ebyProdTitleFormatter(productTags, "fabric") + vela.ebyProdTitleFormatter(c.product_title, "style"),
                                     productColor: vela.ebyProdTitleFormatter(c.product_title, "color"),
                                     productFreeGift: D,
                                     isHiddenCollateral: K,
@@ -1496,14 +1391,6 @@ var ajaxCart = (function (module, $) {
                 void 0 != window.Rebuy && window.Rebuy.init(),
                 $body.trigger("ajaxCart.afterCartLoad", a),
                 window.Shopify && Shopify.StorefrontExpressButtons && Shopify.StorefrontExpressButtons.initialize();
-            setTimeout(() => {
-              const priceTrueTotalElement = document.querySelector('#gamiPriceTrueTotal');
-              const discTrueTotal = document.querySelector('#gamiDiscTrueTotal').textContent;
-      
-              if (priceTrueTotalElement.textContent == discTrueTotal) {
-                  priceTrueTotalElement.classList.add('hidden');
-              }
-            }, 100)
         }),
         (adjustCart = function () {
             function grabSecondBndlSet(line, sync){
@@ -2098,12 +1985,6 @@ var ajaxCart = (function (module, $) {
                       console.log(':: free panty removed ::',{data: data});
                     }
                 });
-            }
-            const priceTrueTotalElement = document.querySelector('#gamiPriceTrueTotal');
-            const discTrueTotal = document.querySelector('#gamiDiscTrueTotal').textContent;
-    
-            if (priceTrueTotalElement.textContent == discTrueTotal) {
-                priceTrueTotalElement.classList.add('hidden');
             }
             (isUpdating = !1),
                 updateCountPrice(a),

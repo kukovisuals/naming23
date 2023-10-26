@@ -6,10 +6,10 @@
       {% if cart.item_count == 0 %}
       {% endif %}>
       
+      <div class="drawerClose">
+          <span class="jsDrawerClose"><i class="close-icon ebyicon-close-thin"></i></span>
+      </div>
       <div class="drawerCartTitle">
-          <div class="drawerClose">
-              <span class="jsDrawerClose"><i class="close-icon ebyicon-close-thin"></i></span>
-          </div>
           {% if customer %}
               <a class="ebyDrawerTitle" href="/account">Account</a>
           {% else %}

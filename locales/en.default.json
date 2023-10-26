@@ -366,7 +366,7 @@
         "accept_sms_checkbox_label": "Text me with offers and deals"
       },
       "order_summary": {
-        "shipping_default_value": "Over $100 - Free. Under $100 - $6"
+        "shipping_default_value": "Over $125 - Free. Under $125 - $6"
       }
     }
   }

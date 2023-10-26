@@ -20,14 +20,10 @@
   .set23-flex-item {
     display: flex;
     justify-content: space-between;
-    padding-top: 22px;
-  }
-  .set23-flex-item:nth-child(2){
-    padding-top: 48px;
+    margin-top: 22px;
   }
   .scnd-pos {
     width: 67%;
-    position: relative;
   }
   .set-selected-variants {
     width: 100%;
@@ -65,30 +61,6 @@
   .rebuy-product-title-container span {
     display: block;
   }
-  .isSupportBra-run-small:after {
-    content: "";
-    background: url(https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_176.png?v=1695139344);
-    height: 58px;
-    display: block;
-    width: 100%;
-    background-repeat: no-repeat;
-    position: relative;
-    top: 13px;
-    font-family: 'Open Sans';
-    background-size: contain;
-  }
-  .set-runs-small23 {
-    position: absolute;
-    width: 100%;
-    top: 100%;
-    font-size: 10px;
-  }
-  .set-runs-small23-text{
-    color: #FF7182;
-    text-align: center;
-    display: block;
-    line-height: 2;
-  }
 </style>
 {% assign isOnDealSale = false %}
 {% assign isLiquidation = false %}
@@ -98,7 +70,8 @@
 {% assign isSet = false %}
 {% assign isBundleBraExtra = '' %}
 {% assign prodFabricTitle = '' %}
-{%- assign isSupportBra = false -%}
+{% assign allTypesBralettes = '' %}
+{% assign isSheer = false %}
 {% for prodTag in product.tags %}
   {% if prodTag contains "elegance23" %}
     {% assign isOnHolidaySale = true %}
@@ -195,7 +168,12 @@
 
   {% for prodTag in product.tags %}
     {% if prodTag contains "pantyType-" %}
-      {%- assign prodNameTitle = prodTag | replace: "pantyType-", "" -%}
+      {%- assign tempProductType = prodTag | replace: "pantyType-", "" -%}
+      {% if prodTag contains "highwaisted" %}
+        {% assign prodNameTitle = tempProductType | replace: "highwaisted", "High Waisted" %}
+      {% else %}
+        {% assign prodNameTitle = tempProductType %}
+      {% endif %}
     {% endif %}
     {% if prodTag contains "pantyColor-" %}
       {%- assign prodColorTitle = prodTag | replace: "pantyColor-", "" -%}
@@ -205,7 +183,12 @@
 {% elsif product.type == 'Mesh Underwear' %}
   {% for prodTag in product.tags %}
     {% if prodTag contains "pantyType-" %}
-      {%- assign prodNameTitle = prodTag | replace: "pantyType-", "" -%}
+      {%- assign tempProductType = prodTag | replace: "pantyType-", "" -%}
+      {% if prodTag contains "highwaisted" %}
+        {% assign prodNameTitle = tempProductType | replace: "highwaisted", "High Waisted" %}
+      {% else %}
+        {% assign prodNameTitle = tempProductType %}
+      {% endif %}
     {% endif %}
     {% if prodTag contains "pantyColor-" %}
       {%- assign prodColorTitle = prodTag | replace: "pantyColor-", "" -%}
@@ -227,18 +210,29 @@
       {%- assign prodColorTitle = prodColorTitle | last -%}
     {% endif %}
   {% endfor %}
-
-{% elsif product.type == "Core Bra" %}
-  {%- assign prodNameTitle = "only bra" -%}
-
+  
+{% elsif product.type == "Core Bralette" %}
+  {%- assign allTypesBralettes = "bralette" -%}
+  
   {% for prodTag in product.tags %}
-    {% if prodTag contains "braletteColor-" %}
-      {%- assign prodColorTitle = prodTag | replace: "braletteColor-", "" -%}
+    {% if prodTag contains "braletteType-" %}
+      {%- assign tempTitle = prodTag | replace: "braletteType-", "" -%}
+      
+      {% if tempTitle contains "wireless" %}
+        {% assign prodNameTitle = "Wireless Bralette" %}
+      {% else %}  
+        {%- assign prodNameTitle = "Support Bralette" -%}
+      {% endif %}
+      
     {% endif %}
   {% endfor %}
+  
+{% elsif product.type == "Core Bra" %}
+  {%- assign prodNameTitle = "Only Bra" -%}
 
-{% elsif product.type == "Core Bralette" or product.type == "Cotton Bralette" or product.type == 'Premium Bralette' or product.type == 'Mesh Bralette' %}
-  {%- assign prodNameTitle = "bralette" -%}
+{% elsif product.type == 'Premium Bralette' %}
+  
+  {%- assign allTypesBralettes = "bralette" -%}
 
   {% for prodTag in product.tags %}
     {% if prodTag contains "braletteColor-" %}
@@ -316,11 +310,21 @@
 {% elsif product.type == "Bra Pack" %}
   {% assign isBundleBra = true %}
   {% assign isBundleBraExtra = product.compare_at_price | money_without_trailing_zeros %}
-  {%- assign prodNameTitle = "Bralette Bundle" -%}
+
   {% for prodTag in product.tags %}
     {% if prodTag contains "bundleFabric-" %}
       {% if prodTag == "bundleFabric-signature" %}
-        {%- assign isSupportBra = true -%}
+        {%- assign prodNameTitle = "Support Bralette" -%}
+      {% elsif prodTag == "bundleFabric-mesh" %}
+        {%- assign prodNameTitle = "Sheer Bralette" -%}
+      {% elsif prodTag == "bundleFabric-mesh_and_signature" %}
+        {%- assign prodNameTitle = "Sheer Bralette & Support Bralette" -%}
+      {% endif %}
+    {% elsif prodTag contains "bundleColor" %}
+      {% if prodTag contains "&" %}
+        {%- assign prodColorTitle = "Mixed Colors" -%}
+      {% else %}
+        {%- assign prodColorTitle = prodTag | replace: "bundleColor-", "" -%}
       {% endif %}
     {% endif %}
   {% endfor %}
@@ -328,58 +332,76 @@
 {% elsif product.type == "Season Set" %}
   {% assign isBundleBra = true %}
   {% assign isSet = true %}
-  {%- assign prodNameTitle = product.title -%}
   {% assign isBundleBraExtra = product.compare_at_price | money_without_trailing_zeros %}
-  {% for prodTag in product.tags %}
-    {% if prodTag contains "setFabric-" %}
-      {% if prodTag == "setFabric-signature" %}
-        {%- assign prodFabricTitle = "Seamless" -%}
-      {% elsif prodTag == "setFabric-mesh" %}
-        {%- assign prodFabricTitle = "Seamless Sheer" -%}
-      {% else %}
-        {%- assign prodFabricTitle = "Mixed" -%}
+  
+   {% for prodTag in product.tags %}
+    {% if prodTag contains 'setTempFa-' %}
+      {%- assign prodNameTitle = "Bra & Panty Set" -%}
+        {%- assign glueFab = "Only Bra "-%} 
+    {% elsif prodTag contains "setFabric-" %}
+      {%- assign tempFab = prodTag | replace: "setType-", "" -%}
+      {% if tempFab contains 'mesh' %}
+        {%- assign glueFab = "Sheer Bralette "-%}  
+        {% assign isSheer = true %}
+        {%- assign prodNameTitle = "Sheer Bra & Panty Set" -%}
+      {% elsif tempFab contains 'signature' %}
+        {%- assign glueFab = "Support Bralette "-%}
+        {%- assign prodNameTitle = "Bra & Panty Set" -%}
+      {% endif %}
+    {% elsif prodTag contains "setType-" %}
+      {%- assign gluePanty = ""-%}
+      {%- assign tempFab = prodTag | replace: "setType-", "" -%}
+      {% if tempFab contains 'high_waisted' %}
+        {%- assign gluePanty = "High Waisted"-%}  
+      {% elsif tempFab contains 'high_cut' %}
+        {%- assign gluePanty = "High Cut"-%}
+      {% elsif tempFab contains '_brief' %}
+        {%- assign gluePanty = "Brief"-%}  
+      {% elsif tempFab contains '_thong' %}
+        {%- assign gluePanty = "Thong"-%}  
       {% endif %}
     {% endif %}
   {% endfor %}
+  {% assign isBundleSetFrabric =  glueFab | append: gluePanty %}
 
 {% endif %}
 {% if product.type == "Gift Cards" %}
-  <div class="subtitle">
+  <div class="subtitle eby-naming-capt23">
     <h1 itemprop="name">The EBY digital gift card</h1>
   </div>
 {% else %}
   {% if product.type contains "Cotton" %}
-    <div class="subtitle">
-      <h3>EBY invisible cotton {{ prodNameTitle | replace: "_", " " }} in
-        <span id="pdp-color-text">{{ prodColorTitle | replace: "_", " " }}</span>
+    <div class="subtitle eby-naming-capt23">
+      <h3>EBY invisible cotton {{ prodNameTitle | replace: "_", " "}}  <span class="eby-naming-low23">in</span> 
+        <span id="pdp-color-text">{{ prodColorTitle | replace: "_", " "}}</span>
       </h3>
     </div>
   {% elsif product.type contains "Silk" %}
-    <div class="subtitle">
-      <h3>Washable eco silk {{ prodNameTitle | replace: "_", " " }} in
-        <span id="pdp-color-text">{{ prodColorTitle | replace: "_", " " }}</span>
+    <div class="subtitle eby-naming-capt23">
+      <h3>Washable eco silk {{ prodNameTitle | replace: "_", " "}}  <span class="eby-naming-low23">in</span> 
+        <span id="pdp-color-text">{{ prodColorTitle | replace: "_", " "}}</span>
       </h3>
     </div>
   {% elsif product.type contains "Mesh" %}
-    <div class="subtitle">
-      <h1 itemprop="name">EBY seamless sheer {{ prodNameTitle | replace: "_", " " }} in {{ prodColorTitle | replace: "_", " " }}</h1>
-    </div>
-  {% elsif product.type contains "Only Bra" %}
-    <div class="subtitle">
-      <h1 itemprop="name">EBY seamless only bra in {{ prodColorTitle | replace: "_", " " }}</h1>
+    <div class="subtitle eby-naming-capt23">
+      <h1 itemprop="name">Seamless {{ prodNameTitle | replace: "_", " " }} <span class="eby-naming-low23">in</span> {{ prodColorTitle | replace: "_", " " }}</h1>
     </div>
   {% else %}
     {% if product.type contains "Surprise Panty Pack" %}
-      <div class="subtitle">
-        <h3>EBY seamless panty 3 pack</h3>
+      <div class="subtitle eby-naming-capt23">
+        <h3>Seamless panty 3 pack</h3>
       </div>
     {% elsif product.type contains "Bra Pack" %}
-      <div class="subtitle">
-        <h3>EBY Seamless {{ product.title }}</h3>
+      <div class="subtitle eby-naming-capt23">
+        <h1 itemprop="name">Seamless {{ prodNameTitle }} Bundle <span class="eby-naming-low23">in</span> {{ prodColorTitle }}</h1>
       </div>
+    {% elsif product.type contains "Season Set" %}
+        <div class="subtitle eby-naming-capt23">
+          <h1 itemprop="name">Seamless {{ glueFab }} <span class="eby-naming-low23">and</span> {% if isSheer %}Sheer {% endif %} {{ gluePanty }} set <span class="eby-naming-low23">in</span> {{ prodColorTitle }}</h1>
+        </div>
     {% else %}
-      <div class="subtitle">
-        <h3>EBY seamless {{ prodNameTitle | replace: "_", " " }} in
+      <div class="subtitle eby-naming-capt23">
+        <h3>Seamless {{ prodNameTitle | replace: "_", " " }} <span class="eby-naming-low23">in</span> 
           <span id="pdp-color-text">{{ prodColorTitle | replace: "_", " " }}</span>
         </h3>
       </div>
@@ -394,17 +416,22 @@
   value="{{ sizesToPutOnNoticeForShip }}" />
 
 <div class="style-changer-block-desktop">
-  {% if product.type contains "Panty Pack" %}
-    <h4 class="product-name-desktop">
-      {% if product.type contains "Cotton" %}Cotton
-      {% endif %}
-      {{ product.title | replace: "_", " " | capitalize }}</h4>
-  {% else %}
-    <h4 class="product-name-desktop">
-      {% if product.type contains "Cotton" %}Cotton
-      {% endif %}
-      {{ prodNameTitle | replace: "_", " " | capitalize }}</h4>
-  {% endif %}
+  <h4 class="product-name-desktop">
+    {% if product.type contains "Panty Pack" %}
+        {% if product.type contains "Cotton" %}
+          Cotton
+        {% endif %}
+        {{ product.title | replace: "_", " " | capitalize }}
+    {% elsif product.type contains "Season Set" %}
+          {{ prodNameTitle }}
+    {% elsif product.type contains "Bra Pack" %}
+          Bra Bundle
+    {% else %}
+        {% if product.type contains "Cotton" %}Cotton
+        {% endif %}
+        {{ prodNameTitle | replace: "_", " " | capitalize }}
+    {% endif %}
+  </h4>
 </div>
 
 {% assign totalReviews = product.metafields.stamped.reviews_count | plus: 0 %}
@@ -597,7 +624,7 @@
     {% comment %}<span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>{% endcomment %}
   </div>
 
-  {% if prodNameTitle == "bralette" or prodNameTitle == "only bra" %}
+  {% if allTypesBralettes == "bralette" or prodNameTitle == "only bra" %}
     <div class="bralette_size_converter size_converter_wrapper">
       <div class="sizeChart_toolbar" style="margin:0;">
         <div class="sizeLabel">Size
@@ -653,7 +680,7 @@
 
     {% comment %}{% include 'product-subscription-options', product_target: product %}{% endcomment %}
 
-    {% if prodNameTitle == "bralette" or prodNameTitle == "only bra" %}<input
+    {% if allTypesBralettes == "bralette" or prodNameTitle == "only bra" %}<input
         type="hidden"
         value=""
         id="ef_select_input-bra_size-0"
@@ -878,7 +905,7 @@
     </div>
 
 
-    <div class="variant_converting_wrapper{% if prodNameTitle == "bralette" or prodNameTitle == "only bra" %} bra_size hidden{% endif %}">
+    <div class="variant_converting_wrapper{% if allTypesBralettes == "bralette" or prodNameTitle == "only bra" %} bra_size hidden{% endif %}">
       {% unless product.type == "Mask" or product.type == "Silk Scarf" %}
         <div class="sizeChart_toolbar">
           <div class="sizeLabel">Size</div>
@@ -906,9 +933,6 @@
             {% assign packProducts = tag | remove: 'packProducts-' %}
           {% elsif tag contains 'packPrice' %}
             {% assign packPrice = tag | remove: 'packPrice-' %}
-            {% if tag contains 'bra000' or tag contains 'bra005'%}
-              {%- assign isSupportBra = true -%}
-            {% endif %}
           {% elsif tag contains 'packColor' %}
             {% assign prodColorTitle = tag | remove: 'packColor-' %}
           {% elsif tag contains 'undiesType' %}
@@ -939,8 +963,7 @@
                 <div class="set23-items scnd-pos">
                   <div>
                     <div class="rebuy-product-title-container">
-                      <span class="r---product-fabric---22">{{ prodFabricTitle }}</span>
-                      <span class="r---product-title---22">Bralette</span>
+                      <span class="r---product-title---22">{{ glueFab }}</span>
                       <span class="r---product-color---22">{{ prodColorTitle }}</span>
                     </div>
                   </div>
@@ -959,11 +982,6 @@
                     <option class="variant-sets-ldd" value="LDD">LDD</option>
                     <option class="variant-sets-xldd" value="XLDD">XLDD</option>
                   </select>
-                  {% if isSupportBra %}
-                    <div class="set-runs-small23">
-                      <span class="set-runs-small23-text">Runs Slightly Small</span>
-                    </div>
-                  {% endif %}
                 </div>
               </div>
               <div class="set23-flex-item">
@@ -980,8 +998,7 @@
                 <div class="set23-items scnd-pos">
                   <div>
                     <div class="rebuy-product-title-container">
-                      <span class="r---product-fabric---22">{{ prodFabricTitle }}</span>
-                      <span class="r---product-title---22">{{ pantyType }}</span>
+                      <span class="r---product-title---22">{% if isSheer %}Sheer {% endif %}{{ gluePanty }}</span>
                       <span class="r---product-color---22">{{ prodColorTitle }}</span>
                     </div>
                   </div>
@@ -1006,7 +1023,7 @@
           </div>
         </div>
       {% endif %}
-      <div class="proVariants {% if isSupportBra %}isSupportBra-run-small {% endif %}{%if isSet %} hide {%endif%} {% if product.metafields.preproduct.preorder %}pre-order-products{% endif %}" data-variants="">
+      <div class="proVariants {%if isSet %} hide {%endif%} {% if product.metafields.preproduct.preorder %}pre-order-products{% endif %}" data-variants="">
         <select name="id" id="productSelect">
           {% for variant in product.variants %}
             {%- if variant.available -%}
@@ -1326,11 +1343,9 @@
                 </div>
 
               {% else %}
-                  {% if isBundleBra %}
-                      {% render 'button-add-to-cart', texto: 'ADD TO CART', type: 'bundleBras', priceAfter: product.price %}
-                  {% else %}
-                      {% render 'button-add-to-cart', texto: 'ADD TO CART', type: 'normal', priceAfter: product.price %}
-                  {% endif %}
+    
+                {% render 'button-add-to-cart', texto: 'ADD TO CART', type: 'normal', priceAfter: product.price %}
+
               {% endif %}
 
             {% endif %}
@@ -1527,7 +1542,7 @@
           class="lazyload"
           data-src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/cdnicon-loan.svg"
           alt="EBY's mission of supporting women owned businesses"
-          title="EBY's mission of supporting women owned businesses" /><p>We turn every purchase into business loans</p>
+          title="EBY's mission of supporting women owned businesses" /><p>We turn 10% into business loans for women</p>
       </li>
     </ul>
   </div>
@@ -1718,36 +1733,6 @@
     }
     .sc-peach_bloom {
       background-color: #D99B7C;
-    }
-    .sc-peach_bloom {
-      background-color: #D99B7C;
-    }
-    .sc-jacaranda {
-      background-color: #A69EBF;
-    }
-    .sc-tango {
-      background-color: #F0918E;
-    }
-    .sc-celestial {
-      background-color: #BBC7CE;
-    }
-    .sc-claret {
-      background-color: #B1382D;
-    }
-    .sc-olive {
-      background-color: #8C8727;
-    }
-    .sc-willow{
-      background-image: url('https://cdn.shopify.com/s/files/1/0313/4062/5964/files/GEN---willow---swatch_img.png?v=1696866176');
-      background-size: 33px 33px;
-    }
-    .sc-mirage {
-      background-image: url('https://cdn.shopify.com/s/files/1/0313/4062/5964/files/GEN---mirage---swatch_img.png?v=1696866903');
-      background-size: 33px 33px;
-    }
-    .sc-bittersweet {
-      background-image: url('https://cdn.shopify.com/s/files/1/0313/4062/5964/files/GEN---bittersweet---swatch_img.png?v=1696866176');
-      background-size: 33px 33px;
     }
     .sc-python {
       background-image: url('https://cdn.shopify.com/s/files/1/0313/4062/5964/files/GEN---python---swatch_img.png?v=1681404595');

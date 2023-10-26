@@ -8,25 +8,25 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
 
 {%- comment -%} One-Time purchase {%- endcomment -%}
 {% unless customer and customer.tags contains "Active Subscriber" -%}
-  {%- assign bProgressBarBreakZeroTextOneTime = "Add ## to get Free Shipping" -%}
-  {%- assign bProgressBarBreakOneOneTime = 10000.0 -%}
-  {%- assign bProgressBarBreakOneFillOneTime = 13.0 -%}
-  {%- assign bProgressBarBreakOneTextTopOneTime = "$100" -%}
-  {%- assign bProgressBarBreakOneTextBottomOneTime = "Free Shipping" -%}
-  {%- assign bProgressBarBreakOneTextOneTime = "Add ## to get $15 off" -%}
+  {%- assign bProgressBarBreakZeroTextOneTime = "You are ## away from 10% for microfinance" -%}
+  {%- assign bProgressBarBreakOneOneTime = 1.0 -%}
+  {%- assign bProgressBarBreakOneFillOneTime = 28.0 -%}
+  {%- assign bProgressBarBreakOneTextTopOneTime = "10%" -%}
+  {%- assign bProgressBarBreakOneTextBottomOneTime = "Generating Impact" -%}
+  {%- assign bProgressBarBreakOneTextOneTime = "You are ## away from FREE SHIPPING" -%}
   {%- assign bDiscountOneSavingOneTime = 0.0 -%}
   {%- assign bCodeDiscountApplyOneOneTime = '' -%}
-  {%- assign bProgressBarBreakTwoOneTime = 13000.0 -%}
-  {%- assign bProgressBarBreakTwoFillOneTime = 45.0 -%}
-  {%- assign bProgressBarBreakTwoTextTopOneTime = "$130" -%}
-  {%- assign bProgressBarBreakTwoTextBottomOneTime = "Get $15 off" -%}
-  {%- assign bProgressBarBreakTwoTextOneTime = "Add ## to get $25 off" -%}
-  {%- assign bDiscountTwoSavingOneTime = 1000 -%}
-  {%- assign bCodeDiscountApplyTwoOneTime = 'GAMPRICEA' -%}{%comment%}'10OffBonus'{%endcomment%}
+  {%- assign bProgressBarBreakTwoOneTime = 10000.0 -%}
+  {%- assign bProgressBarBreakTwoFillOneTime = 50.0 -%}
+  {%- assign bProgressBarBreakTwoTextTopOneTime = "$100" -%}
+  {%- assign bProgressBarBreakTwoTextBottomOneTime = "Free Shipping" -%}
+  {%- assign bProgressBarBreakTwoTextOneTime = "You are ## away from FREE PRIORITY SHIPPING" -%}
+  {%- assign bDiscountTwoSavingOneTime = 0.0 -%}
+  {%- assign bCodeDiscountApplyTwoOneTime = '' -%}{%comment%}'10OffBonus'{%endcomment%}
 {%- else -%}
   {%- assign bProgressBarBreakZeroTextOneTime = "You are ## away from FREE GIFT" -%}
-  {%- assign bProgressBarBreakOneOneTime = 11000.0 -%}
-  {%- assign bProgressBarBreakOneFillOneTime = 60.0 -%}
+  {%- assign bProgressBarBreakOneOneTime = 10000.0 -%}
+  {%- assign bProgressBarBreakOneFillOneTime = 50.0 -%}
   {%- assign bProgressBarBreakOneTextTopOneTime = "$100" -%}
   {%- assign bProgressBarBreakOneTextBottomOneTime = "Free Gift" -%}
   {%- assign bProgressBarBreakOneTextOneTime = "" -%}
@@ -40,12 +40,12 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
   {%- assign bDiscountTwoSavingOneTime = 0.0 -%}
   {%- assign bCodeDiscountApplyTwoOneTime = '' -%}
 {%- endunless -%}
-{%- assign bProgressBarBreakThreeOneTime = 17500.0 -%}
-{%- assign bProgressBarBreakThreeFillOneTime = 70.0 -%}
-{%- assign bProgressBarBreakThreeTextTopOneTime = "$175" -%}
-{%- assign bProgressBarBreakThreeTextBottomOneTime = "Get $25 off" -%}
-{%- assign bProgressBarBreakThreeTextOneTime = "You Got $25 off" -%}
-{%- assign bDiscountThreeSavingOneTime = 1500 -%}
+{%- assign bProgressBarBreakThreeOneTime = 12500.0 -%}
+{%- assign bProgressBarBreakThreeFillOneTime = 78.0 -%}
+{%- assign bProgressBarBreakThreeTextTopOneTime = "$125" -%}
+{%- assign bProgressBarBreakThreeTextBottomOneTime = "Free Priority Shipping" -%}
+{%- assign bProgressBarBreakThreeTextOneTime = "" -%}
+{%- assign bDiscountThreeSavingOneTime = 0 -%}
 {%- assign bCodeDiscountApplyThreeOneTime = '' -%}{%comment%}'15OffBonus'{%endcomment%}
 {%- assign bProgressBarBreakFourOneTime = false -%}
 {%- assign bProgressBarBreakFourFillOneTime = 0 -%}
@@ -76,14 +76,14 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
 {%- assign bProgressBarBreakTwoTextTopSubs = '' -%}
 {%- assign bProgressBarBreakTwoTextBottomSubs = '' -%}
 {%- assign bProgressBarBreakTwoTextSubs = '' -%}
-{%- assign bDiscountTwoSavingSubs = 1000.0 -%}
+{%- assign bDiscountTwoSavingSubs = 0.00 -%}
 {%- assign bCodeDiscountApplyTwoSubs = '' -%}
 {%- assign bProgressBarBreakThreeSubs = false -%}
 {%- assign bProgressBarBreakThreeFillSubs = 0.00 -%}
 {%- assign bProgressBarBreakThreeTextTopSubs = '' -%}
 {%- assign bProgressBarBreakThreeTextBottomSubs = '' -%}
 {%- assign bProgressBarBreakThreeTextSubs = '' -%}
-{%- assign bDiscountThreeSavingSubs = 10.00 -%}
+{%- assign bDiscountThreeSavingSubs = 0.00 -%}
 {%- assign bCodeDiscountApplyThreeSubs = '' -%}
 {%- assign bProgressBarBreakFourSubs = false -%}
 {%- assign bProgressBarBreakFourFillSubs = 0.0 -%}
@@ -218,7 +218,6 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
       }
 
       Shopify.bApplyDiscount = function(code, createBYOK) {
-        
         var discountCode = bGetCookie('discount_code');
         if (code != '') {
           if ((discountCode != code)) {
@@ -287,7 +286,6 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
       };
 
       function bRulesDiscount(cartValue, cartSubscription) {
-        
         var progressBarBreakOne = false;
         var codeDiscountApplyOne = "";
         var progressBarBreakTwo = false;
@@ -306,7 +304,7 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
             isCanada = true;
           }
         }
-        console.log('cartValue',cartValue,'cartSubscription',cartSubscription,'isCustomer',isCustomer);
+        //console.log('cartValue',cartValue,'cartSubscription',cartSubscription,'isCustomer',isCustomer);
         if ((isCustomer == false || isCustomerVIP == true) && isCanada == false) {
           if (cartSubscription == true) {
             progressBarBreakOne = Shopify.gamification.b.subscribe.one.min;
@@ -353,9 +351,8 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
         //console.log('progressBarBreakThree',progressBarBreakThree);
         //console.log('progressBarBreakFour',progressBarBreakFour);
         //console.log('codeDiscountApply',Shopify.codeDiscountApply);
-        
+
         if (Shopify.codeDiscountApply != null) {
-          
           Shopify.bApplyDiscount(Shopify.codeDiscountApply, $('body').hasClass('template-cart') ? true : false);
           if(typeof bFreeGiftProduct != 'function') {
             $('.gamification--is-loading').hide();
@@ -373,10 +370,9 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
           if(isBYOB === undefined) {
             isBYOB = false;
           }
-          //if(doneRulesDiscount === undefined) {
-          //  doneRulesDiscount = false;
-          //}
-          doneRulesDiscount = true
+          if(doneRulesDiscount === undefined) {
+            doneRulesDiscount = false;
+          }
           let isCustomer = {% if customer -%}true{%- else -%}false{%- endif -%};
           let isCustomerVIP = {% if customer and customer.tags contains "Active Subscriber" -%}true{%- else -%}false{%- endif -%};
           let isCanada = false;
@@ -527,7 +523,7 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
               }
             });
           }
-          
+
           if (doneRulesDiscount == false) {
             bRulesDiscount(cartValue, !isAllOneTime);
           }
@@ -1075,8 +1071,7 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
 
   <div class="gamification_container">
     <div class="progress_wrapper">
-      <span class="eby-gami-main-title23">Buy More, Save More</span>
-      <div class="byob-helper_info bfx-price-container bfx-remove-element">
+      <div class="byob-helper_info bfx-price-container bfx-remove-element hidden">
         {%- if bCartValue >= bProgressBarBreakOne -%}
           {% if bCartValue >= bProgressBarBreakTwo %}
             {% if bCartValue >= bProgressBarBreakThree %}
@@ -1110,70 +1105,41 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
           <div class="unlockeds{% if bSubs == true %} unlockeds-subs{% endif %}">
             <div class="unlocked-one{% if bCartValue >= bProgressBarBreakOne %} active{% elsif bHasPreActive == false %} pre-active{%- assign bHasPreActive = true -%}{% endif %}">
               <span class="unlocked-text top">
-                <div class="top-icon-img-pre-active">
-                  <img class="lazyload" loading="lazy" width="21" height="13" alt="shipping" title="shipping" src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_183_1.png?v=1695663942">
-                </div>
-                <span class="top-icon">
-                  <div class="top-icon-container">
-                    <img class="lazyload" loading="lazy" width="21" height="13" alt="shipping" title="shipping" src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_183.png?v=1695136606">
-                  </div>
-                </span>
+                {{- bProgressBarBreakOneTextTop -}}
               </span>
               <span class="unlocked-icon">
               </span>
               <span class="unlocked-text bottom">
-                {{- bProgressBarBreakOneTextTop -}}
-              </span>
-              <span class="unlocked-text bottom2">
                 {{- bProgressBarBreakOneTextBottom -}}
               </span>
             </div>
             <div class="unlocked-two{% if bCartValue >= bProgressBarBreakTwo %} active {% elsif bHasPreActive == false %} pre-active {%- assign bHasPreActive = true -%} {% endif %}">
               <span class="unlocked-text top">
-                <div class="top-icon-img-pre-active">
-                  <img class="lazyload" loading="lazy" width="21" height="13" alt="shipping" title="shipping" src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_181_2.png?v=1695663945">
-                </div>
-                <span class="top-icon">
-                  <img class="lazyload" loading="lazy" width="21" height="13" alt="shipping" title="shipping" src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_181.svg?v=1695670772">
-                </span>
+                {{- bProgressBarBreakTwoTextTop -}}
               </span>
               <span class="unlocked-icon">
               </span>
               <span class="unlocked-text bottom">
-                {{- bProgressBarBreakTwoTextTop -}}
-              </span>
-              <span class="unlocked-text bottom2">
                 {{- bProgressBarBreakTwoTextBottom -}}
               </span>
             </div>
             <div class="unlocked-three{% if bCartValue >= bProgressBarBreakThree %} active {% elsif bHasPreActive == false %} pre-active {%- assign bHasPreActive = true -%} {% endif %}">
               <span class="unlocked-text top">
-                <div class="top-icon-img-pre-active">
-                  <img class="lazyload" loading="lazy" width="21" height="13" alt="shipping" title="shipping" src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_181_2.png?v=1695663945">
-                </div>
-                <span class="top-icon">
-                  <img class="lazyload" loading="lazy" width="21" height="13" alt="shipping" title="shipping" src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_181.svg?v=1695670772">
-                </span>
+                {{- bProgressBarBreakThreeTextTop -}}
               </span>
               <span class="unlocked-icon">
               </span>
               <span class="unlocked-text bottom">
-                {{- bProgressBarBreakThreeTextTop -}}
-              </span>
-              <span class="unlocked-text bottom2">
                 {{- bProgressBarBreakThreeTextBottom -}}
               </span>
             </div>
             <div class="unlocked-four{% if bProgressBarBreakFour != false %}{% if bCartValue >= bProgressBarBreakFour %} active{% elsif bHasPreActive == false %} pre-active{%- assign bHasPreActive = true -%}{% endif %}{% else %} hide{% endif %}">
               <span class="unlocked-text top">
-                icon
+                {{- bProgressBarBreakFourTextTop -}}
               </span>
               <span class="unlocked-icon">
               </span>
               <span class="unlocked-text bottom">
-                {{- bProgressBarBreakFourTextTop -}}
-              </span>
-              <span class="unlocked-text bottom2">
                 {{- bProgressBarBreakFourTextBottom -}}
               </span>
             </div>
@@ -1228,12 +1194,13 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
     */
    
     Shopify.gamification.bUpdateLabelProgressBar = function(cartSubscription) {
+
       //Update progress-bar
       var totalPrice = Shopify.bItemsToAddPrice;
       var totalPriceProgressBar = Shopify.bItemsToAddPrice;
       var totalPriceQ = Shopify.bItemsToAddCount;
       var totalPouches = Shopify.bPouches;
-      console.log('totalPrice',totalPrice,'totalPriceQ',totalPriceQ,'totalPriceProgressBar',totalPriceProgressBar);
+      //console.log('totalPrice',totalPrice,'totalPriceQ',totalPriceQ,'totalPriceProgressBar',totalPriceProgressBar);
       var maxProgressBar = Shopify.gamification.b.maxProgressBar;
       var progressBar = (totalPriceProgressBar / maxProgressBar).toFixed(2);
       totalPrice = (totalPrice / 100).toFixed(2);
@@ -1244,9 +1211,6 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
       let isCustomerVIP = {% if customer and customer.tags contains "Active Subscriber" -%}true{%- else -%}false{%- endif -%};
       let isCanada = false;
       let progressBarDontRun = {{ bProgressBarDontRun | json }};
-      
-      console.log('Gamification Running', progressBar);
-      
       if (progressBarDontRun != '') {
         if (document.querySelector(progressBarDontRun) != null) {
           console.log('::isCanada:: ProgressBar off');
@@ -1259,7 +1223,7 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
         jQuery('.gamification').removeClass('hide');
         if (cartSubscription == true || isCanada == true || (isCustomer == true && isCustomerVIP == false)) {
           //cartValue = Math.round(totalPriceProgressBar / 0.85);
-        console.log('cartValue',cartValue);
+          //console.log('cartValue',cartValue);
           jQuery('.gamification').addClass('hide');
         }
       } else {
@@ -1384,7 +1348,7 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
         progressBarFill = (cartValue * progressBarBreakOneFill) / progressBarBreakOne;
         progressBarFill = progressBarFill;
         
-        console.log('totalPrice',totalPrice,'cartValue',cartValue,'progressBarBreakOne',progressBarBreakOne);
+        //console.log('totalPrice',totalPrice,'cartValue',cartValue,'progressBarBreakOne',progressBarBreakOne);
         jQuery('.gamification .unlockeds > div').removeClass('active').removeClass('pre-active');
         if (progressBarBreakTwo == false) {
           jQuery('.gamification .unlockeds .unlocked-two').removeClass('active');
@@ -1407,28 +1371,7 @@ If bProgressBarBreakValue is false the breaks are for the number of products in 
             jQuery('.gamification .unlockeds .unlocked-one').addClass('pre-active');
           }
         } else {
-
           if (cartValue >= progressBarBreakOne) {
-
-            console.log('Gamification Thresdhold 1 ', cartValue);
-var codeOne = 'Free Shipping'; // Replace with your actual discount code
-
-$.ajax({
-    type: 'POST',
-    url: '/cart/update.js',
-    data: {
-        'attributes[game_unlock_one]': codeOne,
-    },
-    dataType: 'json',
-    success: function(cart) {
-        // If you have additional logic to handle after setting the attribute, add it here.
-        // For example, you might want to update the displayed cart total or show a message to the user.
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-        // Handle the error here
-        console.error("Error occurred gamification 1:", textStatus, errorThrown);
-    }
-});
             jQuery('.gamification .unlockeds .unlocked-one').addClass('active');
 
             progressBarFill = cartValue - progressBarBreakOne;
@@ -1450,8 +1393,8 @@ $.ajax({
             if (progressBarBreakThree == false) {
               jQuery('.gamification .unlockeds .unlocked-three').removeClass('active').addClass('hide');
               if (cartValue >= progressBarBreakTwo) {
-
                 jQuery('.gamification .unlockeds .unlocked-two').addClass('active');
+
               	if (cartValue == progressBarBreakTwo) {
                   progressBarFill = progressBarBreakTwoFill;
                 } else {
@@ -1468,27 +1411,6 @@ $.ajax({
               }
             } else {
               if (cartValue >= progressBarBreakTwo) {
-
-                console.log('Gamification Thresdhold 2 ', cartValue);
-                console.log('Gamification progress 2 ', progressBarBreakTwo);
-var codeTwo = '$10 off'; // Replace with your actual discount code
-
-$.ajax({
-    type: 'POST',
-    url: '/cart/update.js',
-    data: {
-        'attributes[game_unlock_two]': codeTwo,
-    },
-    dataType: 'json',
-    success: function(cart) {
-        // If you have additional logic to handle after setting the attribute, add it here.
-        // For example, you might want to update the displayed cart total or show a message to the user.
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-        // Handle the error here
-        console.error("Error occurred gamification 2:", textStatus, errorThrown);
-    }
-});
                 jQuery('.gamification .unlockeds .unlocked-two').addClass('active');
 
                 progressBarFill = cartValue - progressBarBreakTwo;
@@ -1503,32 +1425,11 @@ $.ajax({
 
                 if (progressBarBreakFour == false) {
                   jQuery('.gamification .unlockeds .unlocked-four').removeClass('active').addClass('hide');
-                  console.log('totalPrice',totalPrice,'cartValue',cartValue,'progressBarBreakTwo',progressBarBreakTwo);
+                  //console.log('totalPrice',totalPrice,'cartValue',cartValue,'progressBarBreakTwo',progressBarBreakTwo);
                   if (cartValue >= progressBarBreakThree) {
                     jQuery('.gamification .unlockeds .unlocked-three').addClass('active');
 
                     //progressBarFill = progressBarBreakThreeFill;
-var codeThree = '$25 off'; // Replace with your actual discount code
-
-$.ajax({
-    type: 'POST',
-    url: '/cart/update.js',
-    data: {
-        'attributes[game_unlock_three]': codeThree,
-    },
-    dataType: 'json',
-    success: function(cart) {
-        // If you have additional logic to handle after setting the attribute, add it here.
-        // For example, you might want to update the displayed cart total or show a message to the user.
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-        // Handle the error here
-        console.error("Error occurred gamification 3:", textStatus, errorThrown);
-    }
-});
-
-                    console.log('Gamification Thresdhold 3 ', cartValue);
-                    console.log('Gamification progress 3 ', progressBarBreakThree);
 
                     progressBarFill = cartValue - progressBarBreakThree;
                     var progressBarFill2 = cartValue - progressBarBreakThree;
@@ -1546,7 +1447,6 @@ $.ajax({
                   jQuery('.gamification .unlockeds .unlocked-four').removeClass('hide');
                   //console.log('totalPrice',totalPrice,'cartValue',cartValue,'progressBarBreakThree',progressBarBreakThree);
                   if (cartValue >= progressBarBreakThree) {
-
                     jQuery('.gamification .unlockeds .unlocked-three').addClass('active');
 
                     progressBarFill = cartValue - progressBarBreakThree;
@@ -1583,7 +1483,6 @@ $.ajax({
                     jQuery('.gamification .unlockeds .unlocked-three').addClass('pre-active');
                   }
                 }
-
               } else {
                 jQuery('.gamification .unlockeds .unlocked-two').addClass('pre-active');
               }
@@ -1603,7 +1502,7 @@ $.ajax({
         //Shopify.gamification.bUpdateLabelSubs(cartSubscription);
         
         //console.log('progressBarFill',progressBarFill);
-        console.log('totalPrice 1',totalPrice,'totalSaving',totalSaving,'cartValue',cartValue);
+        //console.log('totalPrice',totalPrice,'totalSaving',totalSaving,'cartValue',cartValue);
         totalPriceWithSaving = ((totalPrice - totalSaving) / 100).toFixed(2);
         totalPriceWithSavingOne = ((totalPriceOne - totalSavingOne) / 100).toFixed(2);
         totalPriceWithSavingSubs = ((totalPriceSubs - totalSavingSubs) / 100).toFixed(2);
@@ -1636,10 +1535,9 @@ $.ajax({
             }
           } else {
             if (cartValue >= progressBarBreakTwo) {
-              
               Shopify.codeDiscountApply = codeDiscountApplyTwo;
               Shopify.unlockedAward = true;
-              Shopify.awardUnlockMsg = "Congrats! $25 off your cart. Applied at checkout.";
+              //Shopify.awardUnlockMsg = "Congrats! 5% off your cart. Applied at checkout.";
               //Shopify.awardUnlockMsg =  "Congrats! A Kai Perfume added to cart.";
               if (progressBarBreakThree == false) {
                 jQuery('.byob-helper_info').html(bProgressBarBreakTwoText.replace('##', Shopify.formatMoney(progressBarBreakThree - totalPrice*100), '{% raw  %}${{amount}}{% endraw %}').replace('.00',''));
@@ -1707,7 +1605,6 @@ $.ajax({
     }
     
     Shopify.gamification.bUpdateGamification = function(cart, isBYOB, doneFreeGiftProduct, doneRulesDiscount) {
-      
       $('.gamification--is-loading').show();
       setTimeout(function(){
         if(isBYOB === undefined) {
@@ -1716,10 +1613,9 @@ $.ajax({
         if(doneFreeGiftProduct === undefined) {
           doneFreeGiftProduct = false;
         }
-        // if(doneRulesDiscount === undefined) {
-        //  doneRulesDiscount = false;
-        //}
-        doneRulesDiscount = true;
+        if(doneRulesDiscount === undefined) {
+          doneRulesDiscount = false;
+        }
         Shopify.gamification.bClearAllProgressBar();
         var cartSubscription = false;
         var productSubscription = false;
@@ -1922,9 +1818,6 @@ $.ajax({
   }
   .gamification.gamification_side .progress_container {
     width: 100%;
-    margin-top: 16px;
-    padding: 0 2rem;
-    margin-bottom:12px;
   }
   .progress_wrapper .pm-selected_wrapper {
     width: 100px;
@@ -2007,42 +1900,40 @@ $.ajax({
   }
   .gamification .gamification_container .progress_container .progress-unlockeds {
     position: relative;
-    padding: 2rem 0 6rem;
+    padding: 3rem 0 3rem;
   }
   .gamification .progress-unlockeds .progress {
-    background-color: var(--eby-main-dark-color);
-    height: 4px;
+    background-color: #dfe0e4;
+    height: 2px;
     margin: 0px;
-    position: relative;
   }
   .gamification .progress-unlockeds .progress .progress-bar {
-    background-color: #FF7182;
+    background-color: #00082f;
+    border-radius: 5px;
     -webkit-box-shadow: none;
     box-shadow: none;
-    height: 4px;
+    height: 2px;
     max-width: 100%;
-    z-index: 1;
-    position: absolute;
   }
   .gamification .progress-unlockeds .unlockeds > div {
     position: relative;
+    /* top: 0px; */
     text-align: right;
     height: 100%;
   }
   .gamification .progress-unlockeds .unlockeds > div .unlocked-icon {
     display: block;
     text-align: center;
-    top: 16px;
+    top: 21px;
     height: 20px;
-    z-index: 0;
   }
   .gamification .progress-unlockeds .unlockeds > div .unlocked-icon::before {
     content: '';
     display: block;
-    width: 10px;
-    height: 10px;
+    width: 20px;
+    height: 20px;
     position: absolute;
-    left: calc(50% - 4px);
+    left: calc(50% - 10px);
     border-radius: 50%;
     /* border: 2px solid #dfe0e4; */
     background: transparent;
@@ -2050,37 +1941,37 @@ $.ajax({
   .gamification .progress-unlockeds .unlockeds > div .unlocked-icon::after {
     content: '';
     display: block;
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     position: absolute;
-    top: calc(50% - 10px);
-    left: calc(50% - 4px);
+    top: calc(50% - 6px);
+    left: calc(50% - 6px);
     border-radius: 50%;
-    border: 1px solid var(--eby-main-dark-color);
+    border: 2px solid #fff;
     background: transparent;
-    background: #FFF;
-    z-index: 1;
+    background: #dfe0e4;
   }
   .gamification .progress-unlockeds .unlockeds > div.pre-active .unlocked-icon::after {
-    border: 1px solid var(--eby-main-dark-color);
-    background: #FFF;
+    border: 2px solid #fff;
+    background: #dfe0e4;
   }
   .gamification .progress-unlockeds .unlockeds > div.active .unlocked-icon::before {
-    border: 2px solid #FF7182;
+    border: 2px solid #00082f;
     border-color: transparent;
-    background: #FF7182;
+    background: #00082f;
   }
   .gamification .progress-unlockeds .unlockeds > div.active .unlocked-icon::after {
     border: 2px solid transparent;
     background: transparent;
-
+    font-family: "eby";
+    content: '\e837';
     color: #fff;
     font-size: 1.5rem;
     top: -12px;
     left: calc(50% - 11px);
   }
   .gamification .progress-unlockeds .unlockeds > div.active .unlocked-text.top {
-    display: block;
+    display: none;
   }
   .unlockeds {
     display: flex;
@@ -2094,8 +1985,8 @@ $.ajax({
   .gamification .progress-unlockeds .unlockeds > div .unlocked-text {
     display: block;
     font-family: aktiv-grotesk,Helvetica,Arial,sans-serif;
-    font-size: 16px;
-    font-weight: bold; 
+    font-size: 11px;
+    /* font-weight: 500; */
     line-height: normal;
     color: #000C48;
     text-align: center;
@@ -2108,76 +1999,18 @@ $.ajax({
   }
   .gamification .progress-unlockeds .unlockeds > div .unlocked-text.top,
   .gamification .progress-unlockeds .unlockeds > div .unlocked-icon,
-  .gamification .progress-unlockeds .unlockeds > div .unlocked-text.bottom,
-  .gamification .progress-unlockeds .unlockeds > div .unlocked-text.bottom2 {
+  .gamification .progress-unlockeds .unlockeds > div .unlocked-text.bottom {
     position: absolute;
     width: 100%;
     max-width: 108px;
   }
   .gamification .progress-unlockeds .unlockeds > div .unlocked-text.top {
-    top: 1px;
-    margin-top: 5px;
+    /* top: -1px; */
+    margin-top: 8px;
     color: #bfc1cb;
-    height: 30px;
-  }
-  .unlocked-one.pre-active .top-icon,
-  .unlocked-one.pre-active + .unlocked-two .top-icon,
-  .unlocked-one.pre-active + .unlocked-two + .unlocked-three .top-icon,
-  .unlocked-two.pre-active .top-icon,
-  .unlocked-two.pre-active + .unlocked-three .top-icon,
-  .unlocked-three.pre-active .top-icon{
-    display:none;
-  }
-  .unlocked-one.pre-active .top-icon-img-pre-active,
-  .unlocked-two.pre-active .top-icon-img-pre-active, 
-  .unlocked-three.pre-active .top-icon-img-pre-active {
-    display: block;
-  }
-  .top-icon-img-pre-active img {
-    visibility: visible;
-  }
-  .top-icon-img-pre-active{
-    width: 28px;
-    height: 28px;
-    border-radius: 100px;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, 0);
-    z-index: 1; 
-  }
-  .gamification .progress-unlockeds .unlockeds .top-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 100px;
-    background-color: #FF7182;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, 0);
-    z-index: 1;
-  }
-  .unlocked-one.active .top-icon,
-  .unlocked-two.active .top-icon, 
-  .unlocked-three.active .top-icon {
-    display: block;
-  }
-  .unlocked-one.active .top-icon-img-pre-active,
-  .unlocked-two.active .top-icon-img-pre-active, 
-  .unlocked-three.active .top-icon-img-pre-active {
-    display: none ;
-  }
-  
-  .unlocked-one.active .top-icon img,
-  .unlocked-two.active .top-icon img,
-  .unlocked-three.active .top-icon img {
-    visibility: visible;
   }
   .gamification .progress-unlockeds .unlockeds > div .unlocked-text.bottom {
-    top: 36px;
-  }
-  .gamification .progress-unlockeds .unlockeds > div .unlocked-text.bottom2 {
-    top: 56px;
-    font-size: 13px;
-    font-weight: normal;
+    top: 46px;
   }
   .toast.gamificationAlert {
     background: #74be97;
@@ -2333,8 +2166,8 @@ $.ajax({
   .gamification.gamification_side .progress_wrapper .byob-helper_info {
     width: 100%;
     font-family: aktiv-grotesk,Helvetica,Arial,sans-serif;
-    font-size: 13px;
-    font-weight: normal;
+    font-size: 14px;
+    font-weight: 300;
     line-height: normal;
     letter-spacing: normal;
     color: #000C48;
@@ -2359,6 +2192,11 @@ $.ajax({
     font-size: 40px;
     line-height: 2.2rem;
     padding: 0;
+  }
+  @media screen and (max-width: 375px){
+    .gamification .progress-unlockeds .unlockeds > div .unlocked-text.bottom {
+      top: 46px;
+    }
   }
 </style>
 {% endif %}

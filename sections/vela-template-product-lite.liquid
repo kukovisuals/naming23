@@ -1,12 +1,9 @@
 <style>
-.eby-loadingPdp {
-    position: absolute;
-    width: 90%;
-    height: auto;
-    border: 1px solid red;
+.eby-naming-low23{
+  text-transform: lowercase;
 }
-.template-product .proBoxInfo .js-swatch.bundleActive23 {
-    display: none;
+.eby-naming-capt23{
+  text-transform: capitalize;
 }
 .isBundleBras .nrml-price23,
 .isMblBundleBras .nrml-price23 {
@@ -101,15 +98,15 @@ a.klaviyo-bis-trigger.e_enabled {
 /**/
 .adjBraTemp .bralette_size_converter.size_converter_wrapper:after {
     content: "";
-    background: url(https://cdn.shopify.com/s/files/1/0313/4062/5964/files/Group_176.png?v=1695139344);
+    background: url(https://cdn.shopify.com/s/files/1/0313/4062/5964/files/PDP_-_size-scale_-_small_-_lite.svg);
     height: 58px;
     display: block;
     width: 100%;
     background-repeat: no-repeat;
     position: relative;
-    top: 13px;
+    top: -10px;
     font-family: 'Open Sans';
-    background-size: contain;
+    background-size: cover;
 }
 .adjBraTemp form .proVariants:after {
     content: "";
@@ -275,10 +272,6 @@ span.addToCartToggleBenefit {
 }
 .proBoxInfo .proButton.mb20 button#AddToCart {
   margin-top:1.6rem;
-}
-.proBoxInfo .proButton.mb20 button#AddToCart.activeDisable23 {
-    background-color: #DFE0E5;
-    pointer-events: none;
 }
 .proButton.mb20 .addToCartPdpWrapper.subscribe-active button#AddToCart,
 .proButton.mb20 .addToCartPdpWrapper.onetime-active button#AddBoxToCart {
@@ -1206,12 +1199,6 @@ li.active .accordion_arrow {
   {%- assign fullDescription = product.description -%}
 {%- endif -%}
 <input type="hidden" id="prod-style-key" value="{{ prodNameTitle }}::{{ prodColorTitle }}" />
-<fw-storyblock
-  channel="joineby"
-  playlist="glqzQv"
-  mode="pinned"
-  autoplay="true"                       
-></fw-storyblock> 
 <div class="container-full">
   <div class="pageCollectionInner{% if isLiquidation %} pdp-liq{% endif %}">
     <div class="productBox pdp{% if isOnHolidaySale %} holidaySaleItem{% endif %}" itemscope itemtype="http://schema.org/Product">
@@ -2770,9 +2757,37 @@ class EBYTitle {
           return str
       }
   }
-  underwear(str){
-      const name = str.split(' ').slice(-1)
-      return name[0]
+  underwear(str, tags){
+      const name = str.split(' ').slice(-1);
+      console.log(tags)
+      let undiesName = '';
+      if (name[0].toLowerCase().includes("highwaisted")) {
+        undiesName = name[0].toLowerCase().replace(/highwaisted/g, "High Waisted");
+      } else {
+        undiesName = name[0]
+      }
+      
+      let finalName = tags.includes('pantyFabric-mesh') ? 'Sheer ' + undiesName : undiesName
+
+      return finalName
+  }
+  bralettes(str, tags){
+      const name = str.split(' ').slice(-1);
+      let finalName = '';
+      console.log(name, tags)
+      if (str.toLowerCase().includes("only")) {
+        finalName = 'Only Bra'
+      } else if (tags.includes("braletteType-support")) {
+        finalName = 'Support Bralette'
+      } else if (tags.includes("braletteType-wireless")) {
+        finalName = 'Wirless Bralette'
+      } else if (tags.includes("braletteFabric-mesh")) {
+        finalName = 'Sheer Bralette'
+      } else {
+        finalName = name[0]
+      }
+    
+      return finalName
   }
   title(str, i){
       const t = new EbyTypesPdp();
@@ -2945,9 +2960,10 @@ class EBYProduct {
   * @params {str}  [______Rebuy tag strip_____]
   ********************************************************
   */
-  getTitleType(str) {
+  getTitleType(str, strTags) {
       this.conditionalProducts(
           str,
+          strTags,
           'underwear',
           'Bralette',
           'Wrap Top',
@@ -2968,6 +2984,7 @@ class EBYProduct {
   getColorType(str) {
       this.conditionalProducts(
           str,
+          '',
           'underwear',
           'bralette',
           'Wrap Top',
@@ -2988,6 +3005,7 @@ class EBYProduct {
   getFabricType(str) {
       this.conditionalProducts(
           str,
+          '',
           'underwear',
           'braletteFabric-',
           'wrapFabric-',
@@ -3007,11 +3025,13 @@ class EBYProduct {
   writeTitleElement(i) {
 
       document.querySelectorAll(`.r---product-title---22`)[i]
-          .textContent = this._pdpT_
-      document.querySelectorAll(`.r---product-fabric---22`)[i]
-          .textContent = this._pdpF_
+          .textContent = this._pdpT_;
+      if(document.querySelectorAll(`.r---product-fabric---22`)[i]){
+        document.querySelectorAll(`.r---product-fabric---22`)[i]
+            .textContent = this._pdpF_;
+      }
       document.querySelectorAll(`.r---product-color---22`)[i]
-          .textContent = this._pdpC_
+          .textContent = this._pdpC_;
 
       this.reset();
   }
@@ -3033,11 +3053,7 @@ class EBYProduct {
   * @params {handler} options TITLE, COLOR, FABRIC
   ********************************************************
   */
-  conditionalProducts(str, pdpA, pdpB, pdpC, pdpD, pdpE, pdpF, pdpG, pdpH, handler) {
-
-      console.log('______________________________________________________________________')
-      console.log(str, handler)
-      console.log('______________________________________________________________________')
+  conditionalProducts(str, strTags, pdpA, pdpB, pdpC, pdpD, pdpE, pdpF, pdpG, pdpH, handler) {
       const str_clean = str.toLowerCase()
       const underwearLogic = str_clean.includes('highwaisted') || str_clean.includes('brief') || str_clean.includes('bikini') || str_clean.includes('thong') || str_clean.includes('cheeky')
       if (underwearLogic && !str_clean.includes('packs') ) {
@@ -3046,7 +3062,7 @@ class EBYProduct {
           switch (handler) {
               case 'TITLE':
                   const newTitle = new EBYTitle()
-                  this._pdpT_ = newTitle.underwear(str)
+                  this._pdpT_ = newTitle.underwear(str, strTags)
                   return;
               case 'COLOR':
                   const newColor = new EBYColor()
@@ -3064,12 +3080,7 @@ class EBYProduct {
           switch (handler) {
               case 'TITLE':
                   const newTitle = new EBYTitle();
-                  // hot fix needs better solution
-                  if(str.includes('Only Bra')){
-                    this._pdpT_ = 'Only Bra';
-                    return;
-                  }
-                  this._pdpT_ = newTitle.title(str,1)
+                  this._pdpT_ = newTitle.bralettes(str,strTags)
                   return;
               case 'COLOR':
                   const newColor = new EBYColor()
@@ -3198,7 +3209,7 @@ document.addEventListener("rebuy.ready", function (event) {
   if (rebuyWidgetIds.indexOf(rebuyId) >= 0) {
     for (var index = 0; index < widgetProducts.length; index++) {
   
-        const rebuyTitleFilter = ebyPdp.getTitleType(widgetProducts[index].title)
+        const rebuyTitleFilter = ebyPdp.getTitleType(widgetProducts[index].title, widgetProducts[index].tags)
         const rebuyColorFilter = ebyPdp.getColorType(widgetProducts[index].tags)
         const rebuyFabricFilter = ebyPdp.getFabricType(widgetProducts[index].tags)
   

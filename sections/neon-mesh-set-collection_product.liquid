@@ -71,9 +71,6 @@
       line-height: 1.4;
       font-size: 20px;
     }
-    .col-pro-details {
-      height: 80px;
-    }
     .products_col-lg {
       max-width: 240px;
     }
@@ -87,6 +84,7 @@
 {%- unless proImageSize -%}
   {%- assign proImageSize = '800x' -%}
 {%- endunless -%}
+
 <!-- fc 112822 -->
 <section class="premium_product_section same__cols">
   <div class="section-wrap">
@@ -189,6 +187,108 @@
                       {% assign hasAovFlag = true %}	
                     {% endif %}
                   {% endfor %}
+                  {% if product.type == "Season Set" %}
+  {% for prodTag in product.tags %}
+    
+    {% if tempFab contains 'setTempFa-' %}
+      {%- assign prodFabricTitle = "Only Bra & Panty Set" -%}
+    {% elsif prodTag contains "setFabric-" %}
+      {%- assign glueFab = ""-%}
+      {%- assign tempFab = prodTag | replace: "setType-", "" -%}
+      {% if tempFab contains 'mesh' %}
+        {%- assign glueFab = "Bralette & "-%}  
+        {%- assign prodFabricTitle = "Sheer Bra & Panty Set" -%}
+      {% elsif tempFab contains 'signature' %}
+        {%- assign glueFab = "Support & "-%}
+        {%- assign prodFabricTitle = "Bra & Panty Set" -%}
+      {% endif %}
+    {% elsif prodTag contains "setType-" %}
+      {%- assign gluePanty = ""-%}
+      {%- assign tempFab = prodTag | replace: "setType-", "" -%}
+      {% if tempFab contains 'high_waisted' %}
+        {%- assign gluePanty = "High Waisted"-%}  
+      {% elsif tempFab contains 'high_cut' %}
+        {%- assign gluePanty = "High Cut"-%}
+      {% elsif tempFab contains '_brief' %}
+        {%- assign gluePanty = "Brief"-%}  
+      {% elsif tempFab contains '_thong' %}
+        {%- assign gluePanty = "Thong"-%}  
+      {% endif %}
+    {% endif %}
+    
+  {% endfor %}
+  {% assign isBundleSetFrabric =  glueFab | append: gluePanty %}
+{% endif %}
+{% if product.type == "Bra Pack" %}
+  {% for prodTag in product.tags %}
+    {% if prodTag contains "bundleType-" %}
+      {%- assign prodNameTitle = prodTag | replace: "bundleType-", "" | replace: "_", " " -%}
+    {% endif %}
+    {% if prodTag contains "bundleColor-" %}
+      {%- assign prodColorTitle = prodTag | replace: "bundleColor-", "" | replace: "_", " " -%}
+    {% endif %}
+    {% if prodTag contains "bundleFabric-" %}
+      {% if prodTag == "bundleFabric-signature" %}
+        {%- assign prodFabricTitle = "Support" -%}
+      {% elsif prodTag == "bundleFabric-mesh" %}
+        {%- assign prodFabricTitle = "Seamless" -%}
+      {% elsif prodTag == "bundleFabric-mesh_and_signature" %}
+        {%- assign prodFabricTitle = "Sheer & Support" -%}
+      {% else %}
+        {%- assign prodFabricTitle = "Seamless" -%}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% if product.type contains "Underwear" %}
+    {% for prodTag in product.tags %}
+        {% if prodTag contains "pantyType-" %}
+            {%- assign tempTitle = prodTag | replace: "pantyType-", "" | replace: "_", " " -%}
+            {% if tempTitle contains 'high cut' %}
+              {% assign prodNameTitle = 'High Cut' %}
+            {% elsif tempTitle contains 'highwaisted thong' %}
+              {% assign prodNameTitle = 'High Waisted Thong' %}
+            {% elsif tempTitle contains 'highwaisted' %}
+              {% assign prodNameTitle = 'High Waisted' %}
+            {% else %}
+              {% assign prodNameTitle = tempTitle %}
+            {% endif %}
+        {% endif %}
+        {% if prodTag contains "pantyColor-" %}
+            {%- assign prodColorTitle = prodTag | replace: "pantyColor-", "" | replace: "_", " " -%}
+        {% endif %}
+        {% if prodTag contains "pantyFabric-" %}
+            {% if prodTag == "pantyFabric-signature" %}
+                {%- assign prodFabricTitle = "Seamless" -%}
+            {% elsif prodTag == "pantyFabric-cotton" %}
+                {%- assign prodFabricTitle = "Seamless" -%}
+            {% else %}
+                {% if product.type contains "Mesh" %}
+                    {%- assign prodFabricTitle = "Seamless" -%}
+                {% else %}
+                    {%- assign prodFabricTitle = "Seamless" -%}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% elsif product.type contains "Bralette" %}
+    {%- assign prodNameTitle = "Seamless" -%}
+    {% for prodTag in product.tags %}
+        {% if prodTag == "braletteType-wireless_seamless" %}
+            {%- assign prodFabricTitle = "Wireless Bralette" -%}
+        {% elsif prodTag contains "braletteFabric-" %}
+            {% if prodTag == "braletteFabric-signature" %}
+                {%- assign prodFabricTitle = "Support Bralette" -%}
+            {% elsif prodTag == "braletteFabric-cotton" %}
+                {%- assign prodFabricTitle = "Support Cotton" -%}
+            {% elsif product.type contains "Mesh" %}
+              {%- assign prodFabricTitle = "Sheer Bralette" -%}
+            {% else %}
+               {%- assign prodFabricTitle = "Err Add p type" -%}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
 
                   {% assign prodTitleColor = product.title %}
                   {% if prodTitleColor contains "Sheer" %}
@@ -240,14 +340,30 @@
                       </div>
                       <div class="col-pro-details">
 
-                        <h3
-                          class="eby---main---products"
-                          href="{{ product.url }}"
-                          draggable="false">
-                          <span class="r---product-fabric---22">Seamless Sheer</span>
-                          <span class="r---product-title---22">{{ colorTitle[1] | capitalize }}</span>
-                          <span class="r---product-color---22">{{ colorTitle[0] | capitalize }}</span>
+                        <h3 class="eby---main---products" href="{{ product.url }}" draggable="false">
+                          {% if product.type contains "Underwear" %}
+                            <a href="{{ productUrl }}">
+                              <span id="cy-nametitlecll"class="r---product-fabric---22">{{  prodNameTitle | capitalize }}</span>
+                              <span id="cy-fabricll" class="r---product-color---22">{{ prodFabricTitle  | capitalize }}</span>
+                            </a>
+                          {% elsif product.type == "Season Set" %}
+                            <a href="{{ productUrl }}">
+                            <span id="cy-nametitlecll"class="r---product-fabric---22">{{ prodFabricTitle | capitalize }}</span>
+                            <span id="cy-fabricll" class="r---product-color---22">{{ isBundleSetFrabric | capitalize }}</span>
+                            </a>
+                          {% elsif product.type == "Bra Pack" %}
+                            <a href="{{ productUrl }}">
+                              <span id="cy-nametitlecll"class="r---product-fabric---22">{{ prodNameTitle | capitalize }}</span>
+                              <span id="cy-fabricll" class="r---product-color---22">{{ prodFabricTitle | capitalize }}</span>
+                            </a>
+                          {% else %}
+                            <a href="{{ productUrl }}">
+                              <span id="cy-nametitlecll"class="r---product-fabric---22">{{  prodFabricTitle  | capitalize }}</span>
+                              <span id="cy-fabricll" class="r---product-color---22">{{ prodNameTitle  | capitalize }}</span>
+                            </a>
+                          {% endif %}
                         </h3>
+                        
 
 
                       </div>

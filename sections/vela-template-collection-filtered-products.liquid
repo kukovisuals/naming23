@@ -270,6 +270,10 @@
               <div class="labelSale holidaySaleFlag">{{ prodFlagAov }}</div>
             {% elsif on_sale %}
               <div class="labelSale holidaySaleFlag">Sale</div>
+            {% elsif product.type contains "Season Set" %}
+              <span class="labelSale">Set</span>
+            {% elsif product.type contains "Bra Pack" %}
+              <span class="labelSale">Bundle</span>
             {% endif %}
             {% include 'product-grid-filter-item' %}
           </div>

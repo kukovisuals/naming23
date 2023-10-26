@@ -4,44 +4,30 @@
       <div class="ajaxCartInner">
         <div class="top_cart_ttl">
             {% endraw %}{% render 'discount-rules', showProgressBar:true, showProgressBarSideCart:true %}{% raw %}
-            <div class="eby-divider-gray23"></div>
-            <header class="{{#if hasSubscriptionInCart}}eby-subspadding23 {{else}}eby-normpadding23{{/if}}">
+              
+            <header>
                 <span class="cartSubtotalHeading">Your Items<a class="removeAllBtn" href="/cart/clear">Remove All</a></span>
-                <div>
-                  <span class="true-cartSubtotal bfx-total-subtotal bfx-price" id="gamiPriceTrueTotal">{{{trueEcommTotalWithoutShipping}}}</span>
-                  <span class="cartSubtotal bfx-total-subtotal bfx-price" id="gamiDiscTrueTotal">{{{totalPriceWithoutShipping}}}</span>
-                </div>
+                <span class="cartSubtotal bfx-total-subtotal bfx-price">{{{totalPriceWithoutShipping}}}</span>
             </header>
 
             <footer>
                 <span class="unlocks_s_title">Shipping</span>
                 <span class="gamification_unlocks">
                     {{#if hasPriorityShipping}}
-                        <!-- <span id="unlock_three" class="shipping_unlock_value">Free priority, 2-5 days</span> -->
-                        <span id="unlock_three" class="shipping_unlock_value">Free standard, 5-7 days</span>
+                        <span id="unlock_three" class="shipping_unlock_value">Free priority, 2-5 days</span>
                     {{/if}}
                     {{#if isFreeShipping}}              
                         <span id="unlock_two" class="shipping_unlock_value{{#if hasPriorityShipping}} hidden{{/if}}">Free standard, 5-7 days</span>
                     {{/if}}
                     {{#if hasStandardShipping}}
-                        <span id="unlock_one" class="shipping_unlock_value">Standard, 8-15 Days</span>
+                        <span id="unlock_one" class="shipping_unlock_value">$6 standard, 5-7 days</span>
                     {{/if}}
                 </span>
             </footer>
-            {{#if hasSubscriptionInCart}}
-            {{ else }}            
-              <span class="cartItemsHeader-top"><span>One-time Purchases</span></span>
-            {{/if}}
-            <span class="sidecart-divider23"></span>
             <!--<p class="ebyClearCartBtnWrapper"><a href="/cart/clear" class="ebyClearCartBtn">Empty Cart</a></p>-->
         </div>
 
         <style>
-          .eby-divider-gray23 {
-            background-color: #E5E6EC;
-            height: 4px;
-            width: 100%
-          }
           .ajaxcart__subs {
             -webkit-flex-direction: row;
             -ms-flex-direction: row;
@@ -415,6 +401,7 @@
                             <p class="bfx-product-name notranslate">{{ membershipName }}</p>
                             {{else if isIncludedInCustomBox}}
                             <div class="onetimeTitleWrapper">
+                              <span class="onetimeTitle prod_line">{{ productFabric }}</span>
                               <span class="onetimeTitle prod_style"><a{{#unless productFreeGift}} href="{{url}}"{{/unless}}>{{ productStyle }}</a></span>
                               <span  class="onetimeTitle prod_color">{{ productColor }}</span>
                               <a{{#unless productFreeGift}} href="{{url}}"{{/unless}} class="bfx-product-name notranslate">{{ getProductName name }}</a>
@@ -431,6 +418,7 @@
                             <p class="bfx-product-name notranslate">Free Panty Addon</p>
                             {{else}}
                             <div class="onetimeTitleWrapper">
+                              <span class="onetimeTitle prod_line">{{ productFabric }}</span>
                               <span class="onetimeTitle prod_style"><a{{#unless productFreeGift}} href="{{url}}"{{/unless}}>{{ productStyle }}</a></span>
                               <span  class="onetimeTitle prod_color">{{ productColor }}</span>
                               <a{{#unless productFreeGift}} href="{{url}}"{{/unless}} class="bfx-product-name notranslate">{{ getProductName name }}</a>
@@ -511,7 +499,7 @@
               </div>
               <div class="drawerProduct ajaxCartRow savingsRow bfx-remove-element" data-line="{{line}}">
                 <div class="ajaxUpsellIcon">
-                  <i class="ebyicon-promo"></i>
+                    <i class="ebyicon-promo"></i>
                 </div>
                 <div class="prodItem-promoSummaryCopy">
                     You're saving {{ totalSubBoxSavings }} as a subscriber
@@ -572,6 +560,7 @@
                           <p class="bfx-product-name notranslate">{{ membershipName }}</p>
                           {{else if isIncludedInCustomBox}}
                           <div class="onetimeTitleWrapper">
+                            <span class="onetimeTitle prod_line">{{ productFabric }}</span>
                             <span class="onetimeTitle prod_style"><a{{#unless productFreeGift}} href="{{url}}"{{/unless}}>{{ productStyle }}</a></span>
                             <span  class="onetimeTitle prod_color">{{ productColor }}</span>
                             <a{{#unless productFreeGift}} href="{{url}}"{{/unless}} class="bfx-product-name notranslate">{{ getProductName name }}</a>
@@ -588,6 +577,7 @@
                           <p class="bfx-product-name notranslate">Free Panty Addon</p>
                           {{else}}
                           <div class="onetimeTitleWrapper">
+                            <span class="onetimeTitle prod_line">{{ productFabric }}</span>
                             <span class="onetimeTitle prod_style"><a{{#unless productFreeGift}} href="{{url}}"{{/unless}}>{{ productStyle }}</a></span>
                             <span  class="onetimeTitle prod_color">{{ productColor }}</span>
                             <a{{#unless productFreeGift}} href="{{url}}"{{/unless}} class="bfx-product-name notranslate">{{ getProductName name }}</a>
@@ -665,31 +655,25 @@
         		  </div>
                   <div class="drawerProduct ajaxCartRow savingsRow bfx-remove-element" data-line="{{line}}">
                       {{#if hasSavingsAmount }}
-                          {{#if (ifHasProperty 'Bra Pack' properties)}}
-                            <div class="ajaxUpsellIcon">
+                          <div class="ajaxUpsellIcon">
                               <i class="ebyicon-promo"></i>
-                            </div>
+                          </div>
+                          {{#if (ifHasProperty 'Bra Pack' properties)}}
                             <div class="prodItem-promoSummaryCopy">
-                                Part of Bralette Bundle
+                                Part of Bralette Bundle <span>(-{{ savingsAmount }})</span>
                             </div>
                           {{else if (ifHasProperty 'Season Set' properties)}}
-                            <div class="ajaxUpsellIcon">
-                              <i class="ebyicon-promo"></i>
-                            </div>
                             <div class="prodItem-promoSummaryCopy">
-                                Part of Set
+                                Part of Set <span>(-{{ savingsAmount }})</span>
                             </div>
                           {{else}}
                             {{#if hasOtherSavingsOnly }}
                               <div class="prodItem-promoSummaryCopy">
-  
+                                  You're saving <span>{{ savingsAmount }}</span> on this item
                               </div>
                             {{ else }}
-                              <div class="ajaxUpsellIcon">
-                                <i class="ebyicon-promo"></i>
-                              </div>
                               <div class="prodItem-promoSummaryCopy">
-                                You're saving <span>{{ savingsAmount }}</span> on this item as a subscriber
+                                  You're saving <span>{{ savingsAmount }}</span> on this item as a subscriber
                               </div>
                             {{/if}}
                           {{/if}}

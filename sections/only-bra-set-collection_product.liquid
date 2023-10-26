@@ -141,7 +141,7 @@
       font-size: 20px;
     }
     .col-pro-details {
-      height: 80px;
+      height: 55px;
     }
     .products_col-lg {
       max-width: 240px;
@@ -167,12 +167,47 @@
           <h4 class="text-sectiontlt23">The only bra you’ll ever need</h4>
           <p class="text-sectiontxt23">You’ve never felt anything like this before</p>
         </div>
+        <!--technology section -->
+        <section class="permium_hero_sectio eby-bnnr-lg">
+          <div class="section-wrap eby-sm-margin1">
+            <div class="section_image iphone_only">
+              <img
+                data-src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/LP---376---only-bra---usp-bourbon-updated.jpg"
+                loading="lazy"
+                class="mobile_image lazyload"
+                width="376"
+                height="752"
+                alt="Only Bra Technology"
+                title="Only Bra Technology" />
+            </div>
+            <div class="section_image ipads_only">
+              <img
+                data-src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/LP---1440---only-bra---usp-bourbon-updated.jpg"
+                loading="lazy"
+                class="ipad_image lazyload"
+                width="762"
+                height="762"
+                alt="Only Bra Technology"
+                title="Only Bra Technology" />
+            </div>
+            <div class="section_image laptop_only eby-max-wd-banner">
+              <img
+                data-src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/LP---1440---only-bra---usp-bourbon-updated.jpg"
+                loading="lazy"
+                class="desktop_image lazyload"
+                width="1680"
+                height="993"
+                alt="Only Bra Technology"
+                title="Only Bra Technology" />
+            </div>
+          </div>
+        </section>
 
         <div class="premium_product_section eby-premium_content_block velaCollections" data-coll_handle="silk-lp-full-assortment" data-coll_title="Sheer LP, Full Assortment" id="product_listing_section">
           <div class="product-grd collection_group fullwidth">
             <div class="products_cols collection_group_list half_and_half-view">
 
-              {% for product in showcaseCollection.products limit: 6 %}
+              {% for product in showcaseCollection.products limit: 3 %}
 
                 {%- assign itemNumberBeforeImage = forloop.index -%}
 
@@ -180,10 +215,36 @@
                    {%- assign hasFlag = "false" -%}
                   {% assign isOnHolidaySale = false %}
                   {% assign on_sale = false %}
+                  <!-- fc 041123 -->
+                  {% assign isBundlePack = false %}
+                  {% assign bndlVariants = '' %}
+                  {% assign bndlVariants2 = '' %}
+                  {% assign packProducts = '' %}
+                  {% assign isBundleBraExtra = '' %}
+                  {% assign packPrice = '' %}
+                  
+                  {% if product.type == "Bra Pack" %}
+                    {% assign isBundleBraExtra = product.compare_at_price | money_without_trailing_zeros %}
+                  {% endif %}
+                  {% if product.type contains "Cotton" %}
+                      {%- assign showQuickAdd = true -%}
+                  {% elsif product.type contains "Bra Pack" or product.type contains "Season Set" %}
+                      {%- assign showQuickAdd = false -%}
+                  {% endif %}
+
                   {% for prodTag in product.tags %}
                     {% if prodTag contains "lds2023" or prodTag contains "eoy2022-" %}
                       {% assign isOnHolidaySale = true %}
                       {% assign on_sale = true %}
+                    {%- elsif prodTag contains 'fyca23' %}
+                        {% assign bndlVariants = prodTag | remove: 'fyca23-' %}
+                        {% assign isBundlePack = true %}
+                    {% elsif prodTag contains 'fycb23' %}
+                        {% assign bndlVariants2 = prodTag | remove: 'fycb23-' %}
+                    {%  elsif prodTag contains 'packProducts' %}
+                        {% assign packProducts = prodTag | remove: 'packProducts-' %}   
+                    {%  elsif prodTag contains 'packPrice' %}
+                        {% assign packPrice = prodTag | remove: 'packPrice-' %}
                     {% endif %}
                     {% if prodTag contains "prodFlag-" %}
                         {% assign hasFlag = "true" %}
@@ -213,12 +274,79 @@
                     {% endif %}
                   
                     {% assign currSaleDiscount = holidayDiscounts[skuCodeIndex] %}
-
+                    {% elsif product.type == "Season Set" %}
+                      {% assign currSaleDiscount = "30%" %}
+                    {% elsif product.type == "Bra Pack" %}
+                      {% assign currSaleDiscount = "30%" %}
+                      {% for prodTag in product.tags %}
+                        {% if prodTag contains 'bundleFabric-mesh_and_signature'%}
+                          {% assign currSaleDiscount = "14.51%" %}
+                        {% endif %}
+                      {% endfor %}
                     {% if isSubscriber %}
                         {% assign currSaleDiscount = currSaleDiscount | replace: "%", "" | plus: 10 | append: "%" %}
                     {% endif %}
-                  
+                    
                   {% endif %}
+
+                                
+                  {% if product.type == "Season Set" %}
+                    {% for prodTag in product.tags %}
+                      {% if tempFab contains 'setTempFa-' %}
+                        {%- assign prodFabricTitle = "Only Bra & Panty Set" -%}
+                      {% elsif prodTag contains "setFabric-" %}
+                        {%- assign glueFab = ""-%}
+                        {%- assign tempFab = prodTag | replace: "setType-", "" -%}
+                        {% if tempFab contains 'mesh' %}
+                          {%- assign glueFab = "Bralette & "-%}  
+                          {%- assign prodFabricTitle = "Sheer Bra & Panty Set" -%}
+                        {% elsif tempFab contains 'signature' %}
+                          {%- assign glueFab = "Support & "-%}
+                          {%- assign prodFabricTitle = "Bra & Panty Set" -%}
+                        {% endif %}
+                      {% elsif prodTag contains "setType-" %}
+                        {%- assign gluePanty = ""-%}
+                        {%- assign tempFab = prodTag | replace: "setType-", "" -%}
+                        {% if tempFab contains 'high_waisted' %}
+                          {%- assign gluePanty = "High Waisted"-%}  
+                        {% elsif tempFab contains 'high_cut' %}
+                          {%- assign gluePanty = "High Cut"-%}
+                        {% elsif tempFab contains '_brief' %}
+                          {%- assign gluePanty = "Brief"-%}  
+                        {% elsif tempFab contains '_thong' %}
+                          {%- assign gluePanty = "Thong"-%}  
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% assign isBundleSetFrabric =  glueFab | append: gluePanty %}
+                  {% elsif product.type contains "Core Bra" %}
+                    {%- assign prodNameTitle = "Seamless" -%}
+                    {% for prodTag in product.tags %}
+                        {% if prodTag contains "braletteFabric-" %}
+                            {% if prodTag == "braletteFabric-signature" %}
+                                {%- assign prodFabricTitle = "Only Bra" -%}
+                            {% elsif prodTag == "braletteFabric-cotton" %}
+                                {%- assign prodFabricTitle = "Err add p type" -%}
+                                    {% else %}
+                                        {% if product.type contains "Mesh" %}
+                                    {%- assign prodFabricTitle = "Sheer Bralette" -%}
+                                {% else %}
+                                    {%- assign prodFabricTitle = "Err Add p type" -%}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                  {% endif %}
+                  {%- assign showQuickAdd = false -%}
+                  {% if product.type contains "Cotton" %}
+                      {%- assign showQuickAdd = true -%}
+                  {% else %}
+                      {% if product.handle contains 'pack' or product.handle contains 'sets' %}
+                      {% else %}
+                          {%- assign showQuickAdd = true -%}
+                      {% endif %}
+                  {% endif %}
+
                     
                   {% assign prodTitleColor = product.title %}
                   {%- assign colorTitle = prodTitleColor | split: " Only " -%}
@@ -258,17 +386,22 @@
                         </a>
                       </div>
                       <div class="col-pro-details">
-
-                        <h3
-                          class="eby---main---products"
-                          href="{{ product.url }}"
-                          draggable="false">
-                          <span class="r---product-fabric---22">Signature Seamless</span>
-                          <span class="r---product-title---22">Only {{ colorTitle[1] | capitalize }}</span>
-                          <span class="r---product-color---22">{{ colorTitle[0] | capitalize }}</span>
+                        {% if product.type contains "Bra Pack" %}
+                        <h3 href="{{ product.url }}" draggable="false">
+                          <span class="r---product-fabric---22 cy-testClFabric " data-cyclfabric="{{prodNameTitle}}">{{ prodNameTitle| capitalize  }}</span>
+                          <span class="r---product-color---22 cy-testClName" data-cyclname="{{prodFabricTitle}}">{{ prodFabricTitle | capitalize  }}</span>
                         </h3>
-
-
+                        {% elsif product.type contains "Season Set" %}
+                        <h3 href="{{ product.url }}" draggable="false">
+                          <span class="r---product-fabric---22 cy-testClFabric " data-cyclfabric="{{prodFabricTitle}}">{{ prodFabricTitle| capitalize  }}</span>
+                          <span class="r---product-color---22 cy-testClName" data-cyclname="{{isBundleSetFrabric}}">{{ isBundleSetFrabric | capitalize  }}</span>
+                        </h3>
+                        {% else %}
+                        <h3 class="eby---main---products" href="{{ product.url }}" draggable="false">
+                          <span class="r---product-fabric---22 cy-testClFabric " data-cyclfabric="{{ prodFabricTitle }}">{{ prodFabricTitle }}</span>
+                          <span class="r---product-color---22 cy-testClName" data-cyclname="{{prodNameTitle}}">{{ prodNameTitle | capitalize  }}</span>
+                        </h3>
+                        {% endif %}
                       </div>
                       <div class="product-details proButton clearfix">
                         <div class="quick_btn pre-btn">
@@ -278,7 +411,7 @@
                               data-href="#velaQuickAdd-{{ product.id }}-1"
                               data-handle="{{ product.handle }}"
                               title="Quick Add +">
-                              <div class="quickAddBtnInnerWrapper">
+                              <div class="quickAddBtnInnerWrapper" {% if isBundlePack %}id="eby-bundle-bras23-{{ product.id }}" data-typepdp="{{ product.type }}" data-packprice="{{packPrice}}" data-mainids="{{packProducts}}" data-bundlepdp="{{bndlVariants}}" data-bundlepdp2="{{bndlVariants2}}" {% endif %}>
                                 <span class="text">Add to Cart</span>
 
                                 <div class="prodTilePriceWrapper{% if customer.tags contains 'Active Subscriber' and product.metafields.ebyacf.vip_product_price %} vipHighlight{%endif%}">
@@ -296,6 +429,11 @@
                                   {% if isOnDealSale and isOnHolidaySale == false %}
                                     <div class="priceProduct holidayPriceWrapper ebyProdTile-vipPriceWrapper strikethrough bfx-price">{{ product.price | money_without_trailing_zeros }}</div>
                                     <div class="holidayPriceWrapper standard saleHighlight bfx-price">{{ dealSalePrice | money_without_trailing_zeros }}</div>
+                                  {% endif %}
+                                  {% if product.type == "Bra Pack" or product.type == "Season Set" %}
+                                      <div class="ebyProdTile-vipPriceWrapper bfx-remove-element">
+                                        <p class="bfx-price">{{ isBundleBraExtra }}</p>
+                                      </div>
                                   {% endif %}
                                   {% if customer.tags contains 'Active Subscriber' %}
                                     {% if product.type == "Mask" %}
@@ -510,42 +648,6 @@
             </div>
           </footer>
         </article>
-
-        <!--technology section -->
-        <section class="permium_hero_sectio eby-bnnr-lg">
-          <div class="section-wrap eby-sm-margin1">
-            <div class="section_image iphone_only">
-              <img
-                data-src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/LP---376---only-bra---usp-bourbon-updated.jpg"
-                loading="lazy"
-                class="mobile_image lazyload"
-                width="376"
-                height="752"
-                alt="Only Bra Technology"
-                title="Only Bra Technology" />
-            </div>
-            <div class="section_image ipads_only">
-              <img
-                data-src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/LP---1440---only-bra---usp-bourbon-updated.jpg"
-                loading="lazy"
-                class="ipad_image lazyload"
-                width="762"
-                height="762"
-                alt="Only Bra Technology"
-                title="Only Bra Technology" />
-            </div>
-            <div class="section_image laptop_only eby-max-wd-banner">
-              <img
-                data-src="https://cdn.shopify.com/s/files/1/0313/4062/5964/files/LP---1440---only-bra---usp-bourbon-updated.jpg"
-                loading="lazy"
-                class="desktop_image lazyload"
-                width="1680"
-                height="993"
-                alt="Only Bra Technology"
-                title="Only Bra Technology" />
-            </div>
-          </div>
-        </section>
 
         <!-- end video blocks -->
 

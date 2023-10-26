@@ -92,8 +92,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 24px;
+    margin-top: 20px;
     height:144px;
+  }
+  .rebuy-bundle-wrapper-2023:nth-child(2) {
+    margin-top: 5px;
   }
   .rebuy-addon__item-checkbox {
     width: 6%;
@@ -333,17 +336,13 @@
                   v-html="product.title"
                   v-bind:alt="'View ' + product.title"></div>
                 ---->
-                
-                <a class="rebuy-product-image" v-bind:href="learnMoreURL(product)" v-on:click="learnMore(product);" v-bind:class="[hasLearnMore() ? 'clickable' : '']">
-        
-                  <div class="rebuy-product-title-price-wrapper">
+                <div class="rebuy-product-title-price-wrapper">
+                  <a class="rebuy-product-image" v-bind:href="learnMoreURL(product)" v-on:click="learnMore(product);" v-bind:class="[hasLearnMore() ? 'clickable' : '']">
                     <div class="rebuy-product-title-container">
-  
-                      <span class="r---product-fabric---22"></span>
                       <span class="r---product-title---22"></span>
                       <span class="r---product-color---22"></span>
                     </div>
-                </a>
+                  </a>
                   <div
                     class="rebuy-addon__item-variant-title rebuy-variant-title"
                     v-if="showVariantTitle(product)"
@@ -370,7 +369,7 @@
 
                   <div class="rebuy-addon__item-product-options rebuy-product-options rebuy-slctr-mx-width" v-if="showVariantSelect(product)">
                     <div class="rebuy-hck-size23">
-                      <span class="rebuy-hck-size23-span">Choose Your Size</span>
+                      <span class="rebuy-hck-size23-span">SELECT SIZE</span>
                     </div>
                     <select
                       :id="id + '-' + 'select' + '-' + product_index"

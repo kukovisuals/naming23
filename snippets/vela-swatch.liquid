@@ -38,6 +38,7 @@
         {% assign bndlVariants2 = '' %}
         {% assign packProducts = '' %}
         {% assign packPrice = '' %}
+        {% assign fabricTag = '' %}
         {%- for tag in product.tags -%}
             {%- if tag contains 'fyca23' %}
                 {% assign bndlVariants = tag | remove: 'fyca23-' %}
@@ -49,11 +50,17 @@
             {%  elsif tag contains 'packPrice' %}
               {% assign packPrice = tag | remove: 'packPrice-' %}
             {%- endif -%}
+            
+            {%- if tag contains 'Type-' %}
+                {% assign fabricTagTemp = tag |  split: '-'  %}
+                {% assign fabricTag = fabricTagTemp[1] %}
+            {% endif %}
         {%- endfor -%}
         {% if product.type == "Season Set" %}
             {% assign isBundlePack = false %}
         {% endif  %}
-        <div class="js-swatch swatch clearfix {% if is_color %}color{% else %}size{% endif %}{% if is_color == false and isBundlePack %} bundleActive23{%endif%}" data-typepdp="{{product.type}}" {% if is_color == false and isBundlePack %}id="eby-bundle-bras23" data-packprice="{{packPrice}}" data-mainids="{{packProducts}}" data-bundlepdp="{{bndlVariants}}" data-bundlepdp2="{{bndlVariants2}}" {% endif %} data-option-index="{{ option_index }}">
+        <div class="js-swatch swatch clearfix {% if is_color %}color{% else %}size{% endif %}" data-typepdp="{{product.type}}" {% if is_color == false and isBundlePack %}id="eby-bundle-bras23" data-packprice="{{packPrice}}" data-mainids="{{packProducts}}" data-bundlepdp="{{bndlVariants}}" data-bundlepdp2="{{bndlVariants2}}" {% endif %} data-option-index="{{ option_index }}">
+            <input type="hidden" id="product_fabric_tag" name="properties[pdp_fabric_type]" value="{{ fabricTag }}">
             {%- assign values = '' -%}
             {% for variant in product.variants %}
                 {%- assign value = variant.options[option_index] -%}

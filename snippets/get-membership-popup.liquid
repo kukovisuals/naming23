@@ -475,12 +475,12 @@
                               <span>XL</span>
                             </label>
                           </li>
-                          <!-- <li class="sortOpt styleChoiceOption opt-xsdd">
+                          <li class="sortOpt styleChoiceOption opt-xsdd">
                             <label for="aos_filter_opt-xsdd" class="cbOptLabel">
                               <input class="with-gap"type="radio" name="boxFilter-aosize" value="xsdd" data-val="xsdd" data-sizecopy="XSDD" data-sizeopt="xsdd" id="aos_filter_opt-xsdd">
                               <span>XSDD</span>
                             </label>
-                          </li> -->
+                          </li>
                           <li class="sortOpt styleChoiceOption opt-sdd">
                             <label for="aos_filter_opt-sdd" class="cbOptLabel">
                               <input class="with-gap"type="radio" name="boxFilter-aosize" value="sdd" data-val="sdd" data-sizecopy="SDD" data-sizeopt="sdd" id="aos_filter_opt-sdd">
@@ -535,7 +535,7 @@
   </div>
   <div class="modal-footer">
     <div id="esp-button_wrapper" class="dashBtnWrapper hidden">
-      <button id="ebyAddAnAddonBtn" class="subPanelBtn ebyAddonBtn" data-type="ebyAddAnAddonBtn" data-val="addABralette" >Add A Bra</button>
+      <button id="ebyAddAnAddonBtn" class="subPanelBtn ebyAddonBtn" data-type="ebyAddAnAddonBtn" data-val="addABralette" >Add A<br/>Bralette?</button>
       <button id="ebyAddToCartPopupSaveBtn" class="ebyDashPopupSaveBtn submitSelect" disabled data-type="ebyAddToCartPopupSaveBtn" data-val="addMembershipBox" >Add To Cart</button>
     </div>
   </div>
@@ -768,23 +768,6 @@ vela.addEbyMembershipBox = function (modalType, opts) {
 
     jQuery.getJSON('/cart.js', function (cart, textStatus) {
 
-      // if their page is currently the free bra page, update their bra
-      //let currPage = window.location.href;
-      // let freeBraUnlocked = false;
-      // if (currPage.indexOf('bra-subscription-free') >= 0) {
-      //   // loop through items to find the most expensive bra and reduce its price to zero
-      //   //let brasApplicable = cart.items.reduce((acc, item) => (if (item.product_type.indexOf('bra') >= 0) { acc.push(item);} return acc), []);
-
-      //   let brasApplicable = cart.items.reduce((acc, item) => (if (!!item.properties['FREEBRALETTE']) { acc.push(item);} return acc), []);
-    
-      //   if (brasApplicable.length > 1) {
-      //     // choose the higher product and make it have an additional discount
-      //     freeBraUnlocked = true; 
-      //   }
-
-      //   // find the bra in question and replace it in the cart data
-      // }
-
       jQuery.ajax({
         type: "POST",
         crossDomain : true,
@@ -796,9 +779,6 @@ vela.addEbyMembershipBox = function (modalType, opts) {
           var token = data.checkout.token;
           var url = 'https://checkout.rechargeapps.com/r/checkout/'+token;
           //hj('event', 'ebySubToCheckout');
-          // if (!!freeBraUnlocked) {
-          //   url = `${url}&discount=FREEBRATEST`;
-          // }
 
           if (window.offerDataCoupon) {
             //url = `${url}&discount=${window.offerDataCoupon}`;
@@ -2782,7 +2762,7 @@ vela.addEbyMembershipBox = function (modalType, opts) {
             }
 
             let freeaddonUnlockedProduct = null;
-            if (!!isFreeAddonEnabled && !!window.fsba && window.location.href.indexOf('bra-subscription-free') >= 0) {
+            if (!!isFreeAddonEnabled && !!window.fsba) {
               let freeAddon = window.fsba;
 
               freeaddonUnlockedProduct = {
@@ -3037,7 +3017,7 @@ vela.addEbyMembershipBox = function (modalType, opts) {
             }
 
             // freeaddon
-            if (!!isFreeAddonEnabled && !!window.fsba && window.location.href.indexOf('bra-subscription-free') >= 0) {
+            if (!!isFreeAddonEnabled && !!window.fsba) {
               let freeAddon = window.fsba;
               membershipBoxData.items.push({
                 quantity: 1,
@@ -3046,16 +3026,6 @@ vela.addEbyMembershipBox = function (modalType, opts) {
                   "Shipping Option":"pickup Ecommerce WH",
                   "FREEBRALETTE" : true,
                   "freebralette" : true
-                }
-              });
-              membershipProperties['subscription_ids'] += "," + freeAddon;
-            } else if (!!isFreeAddonEnabled && !!window.fsba) {
-              let freeAddon = window.fsba;
-              membershipBoxData.items.push({
-                quantity: 1,
-                id: freeAddon,
-                properties: {
-                  "Shipping Option":"pickup Ecommerce WH"
                 }
               });
               membershipProperties['subscription_ids'] += "," + freeAddon;
@@ -3083,8 +3053,7 @@ vela.addEbyMembershipBox = function (modalType, opts) {
                   console.log(':: membership box and prods added to cart ::',{data: data});
 
                   // turn off loaders
-                  //M.toast({html: 'Membership added to cart!', classes: 'membershipPopupAlert success'});
-                  M.toast({html: 'Membership added to cart!', classes: 'ebyAtcAlert success'});
+                  M.toast({html: 'Membership added to cart!', classes: 'membershipPopupAlert success'});
                   //hj('event', 'ebySubAddedToCart');
                   // gtag('event', 'boxPopup-add', {
                   //   'event_category': 'ebyacq-newSubAddToCart',
